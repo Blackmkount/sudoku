@@ -1,9 +1,10 @@
-import * as E from './engine.js';
+import * as M from './engine.js';
 import { TIERS } from './levels.js';
 
 const $ = (id) => document.getElementById(id);
 const KEY = 'azulejo.v1';
 const HISTORY_MAX = 80;
+let E = M.getEngine(9); // motor del tamaño de la partida actual
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const list = (ds) => (ds.length < 2 ? `${ds[0]}` : `${ds.slice(0, -1).join(', ')} y ${ds[ds.length - 1]}`);
@@ -49,6 +50,14 @@ function load() {
   return defaults();
 }
 let S = load();
+// Versión 2 de los niveles: Diabólico pasó a 12×12, su progreso anterior ya no aplica.
+if ((S.levelsVersion || 1) < 2) {
+  delete S.progress.diabolico;
+  if (S.stats.best) delete S.stats.best.diabolico;
+  if (S.game && S.game.tier === 'diabolico') S.game = null;
+  S.levelsVersion = 2;
+}
+if (S.game && !TIERS.some((t) => t.id === S.game.tier)) S.game = null;
 let G = S.game;
 function persist() {
   S.game = G;
@@ -60,8 +69,8 @@ const tierById = Object.fromEntries(TIERS.map((t, i) => [t.id, { ...t, i }]));
 const prog = (id) => (S.progress[id] ||= { done: {} });
 const doneCount = (id) => Object.keys(prog(id).done).length;
 function levelData(id, idx) {
-  const L = tierById[id].levels[idx];
-  return { puzzle: L.slice(0, 81), solution: L.slice(81, 162), tech: L.slice(162) };
+  const t = tierById[id], L = t.levels[idx], NN = t.size * t.size;
+  return { puzzle: L.slice(0, NN), solution: L.slice(NN, 2 * NN), tech: L.slice(2 * NN) };
 }
 function nextIndex(id) {
   const d = prog(id).done, n = tierById[id].levels.length;
@@ -73,7 +82,7 @@ const fmt = (s) => {
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
   return h ? `${h}:${String(m).padStart(2, '0')}:${String(x).padStart(2, '0')}` : `${m}:${String(x).padStart(2, '0')}`;
 };
-const unitName = (u) => (u < 9 ? `la fila ${u + 1}` : u < 18 ? `la columna ${u - 8}` : `la caja ${u - 17}`);
+const unitName = (u) => (u < E.N ? `la fila ${u + 1}` : u < 2 * E.N ? `la columna ${u - E.N + 1}` : `la caja ${u - 2 * E.N + 1}`);
 const todayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const dateLabel = (key) => {
   const [y, m, d] = key.split('-').map(Number);
@@ -129,13 +138,20 @@ document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click'
 
 // ── Inicio ─────────────────────────────────────────────────
 function renderTile(el, puzzle, values) {
+  const n = M.sizeOfStr(puzzle.length), T = M.getEngine(n);
   el.innerHTML = '';
-  for (let i = 0; i < 81; i++) {
+  el.style.setProperty('--tn', n);
+  for (let i = 0; i < n * n; i++) {
     const s = document.createElement('span');
+    const r = T.ROW_OF[i], c = T.COL_OF[i];
     const given = puzzle[i] !== '.';
-    const v = given ? puzzle[i] : values && values[i] ? values[i] : '';
+    const v = given ? M.valOf(puzzle[i]) : values && values[i] ? values[i] : '';
     s.textContent = v;
-    if (!given && v) s.className = 'u';
+    const cls = [];
+    if (!given && v) cls.push('u');
+    if (c === n - 1) cls.push('lc'); else if ((c + 1) % T.BC === 0) cls.push('br');
+    if (r === n - 1) cls.push('lr'); else if ((r + 1) % T.BR === 0) cls.push('bb');
+    s.className = cls.join(' ');
     el.appendChild(s);
   }
 }
@@ -247,11 +263,12 @@ function openLevels(id) {
 
 // ── Crear partidas ─────────────────────────────────────────
 function newGame(o) {
+  const n = M.sizeOfStr(o.puzzle.length);
   return {
-    mode: o.mode, tier: o.tier, index: o.index ?? null, date: o.date ?? null,
+    mode: o.mode, tier: o.tier, index: o.index ?? null, date: o.date ?? null, n,
     puzzle: o.puzzle, solution: o.solution, tech: o.tech,
-    values: [...o.puzzle].map((ch) => (ch === '.' ? 0 : +ch)),
-    notes: new Array(81).fill(0),
+    values: M.fromStr(o.puzzle),
+    notes: new Array(n * n).fill(0),
     time: 0, errors: 0, hints: 0, done: false, failed: false, history: [],
   };
 }
@@ -277,10 +294,9 @@ function startLevel(id, idx) {
 }
 function dailyData(key) {
   const pool = [...TIERS[2].levels.map((l) => [TIERS[2].id, l]), ...TIERS[3].levels.map((l) => [TIERS[3].id, l])];
-  const seed = E.hashString(`azulejo-${key}`);
+  const seed = M.hashString(`azulejo-${key}`);
   const [tier, L] = pool[seed % pool.length];
-  const t = E.transform(E.fromStr(L.slice(0, 81)), E.fromStr(L.slice(81, 162)), E.mulberry32(seed));
-  return { mode: 'daily', tier, date: key, puzzle: E.toStr(t.puzzle), solution: t.solution.join(''), tech: L.slice(162) };
+  return { mode: 'daily', tier, date: key, ...variant(tier, L, M.mulberry32(seed)) };
 }
 $('dailyBtn').addEventListener('click', () => {
   const k = todayKey();
@@ -290,11 +306,16 @@ $('dailyBtn').addEventListener('click', () => {
   }
   replaceGame(dailyData(k));
 });
+// Variante de un nivel (permuta números, filas y columnas): misma dificultad, tablero distinto
+function variant(tierId, L, rng) {
+  const n = tierById[tierId].size, NN = n * n, T = M.getEngine(n);
+  const tr = T.transform(M.fromStr(L.slice(0, NN)), M.fromStr(L.slice(NN, 2 * NN)), rng);
+  return { puzzle: M.toStr(tr.puzzle), solution: M.toStr(tr.solution), tech: L.slice(2 * NN) };
+}
 function quickData(id) {
   const t = tierById[id];
   const L = t.levels[Math.floor(Math.random() * t.levels.length)];
-  const tr = E.transform(E.fromStr(L.slice(0, 81)), E.fromStr(L.slice(81, 162)), E.mulberry32((Math.random() * 2 ** 32) >>> 0));
-  return { mode: 'quick', tier: id, date: String(Date.now()), puzzle: E.toStr(tr.puzzle), solution: tr.solution.join(''), tech: L.slice(162) };
+  return { mode: 'quick', tier: id, date: String(Date.now()), ...variant(id, L, M.mulberry32((Math.random() * 2 ** 32) >>> 0)) };
 }
 $('quickBtn').addEventListener('click', () => {
   const list = $('quickList');
@@ -311,22 +332,63 @@ $('quickBtn').addEventListener('click', () => {
 
 // ── Tablero ────────────────────────────────────────────────
 const boardEl = $('board');
-const cells = new Array(81);
-for (let b = 0; b < 9; b++) {
-  const box = document.createElement('div');
-  box.className = 'box';
-  for (const i of E.UNITS[18 + b]) {
-    const c = document.createElement('div');
-    c.className = 'cell';
-    c.dataset.i = i;
-    c.setAttribute('role', 'gridcell');
-    c.innerHTML = `<span class="v"></span><div class="n">${'<i></i>'.repeat(9)}</div>`;
-    [...c.querySelectorAll('.n i')].forEach((el, k) => { el.textContent = k + 1; });
-    c.style.setProperty('--d', `${(E.ROW_OF[i] + E.COL_OF[i]) * 34}ms`);
-    cells[i] = c;
-    box.appendChild(c);
+const pad = $('pad');
+const keys = [];
+let cells = [];
+let builtN = 0;
+
+// Construye tablero, adornos y teclado para el tamaño de la partida (9×9 o 12×12)
+function buildBoard() {
+  const n = G.n;
+  E = M.getEngine(n);
+  if (builtN === n) return;
+  builtN = n;
+  const game = $('game');
+  game.classList.toggle('n12', n === 12);
+  game.style.setProperty('--n', n);
+  game.style.setProperty('--nr', Math.ceil(n / 3));
+  boardEl.style.setProperty('--bx', n / E.BC);
+  boardEl.style.setProperty('--by', n / E.BR);
+  boardEl.style.setProperty('--bc', E.BC);
+  boardEl.style.setProperty('--br', E.BR);
+  boardEl.innerHTML = '';
+  cells = new Array(E.NN);
+  const step = Math.round(300 / n);
+  for (let b = 0; b < n; b++) {
+    const box = document.createElement('div');
+    box.className = 'box';
+    for (const i of E.UNITS[2 * n + b]) {
+      const c = document.createElement('div');
+      c.className = 'cell';
+      c.dataset.i = i;
+      c.setAttribute('role', 'gridcell');
+      c.innerHTML = `<span class="v"></span><div class="n">${'<i></i>'.repeat(n)}</div>`;
+      [...c.querySelectorAll('.n i')].forEach((el, k) => { el.textContent = k + 1; });
+      c.style.setProperty('--d', `${(E.ROW_OF[i] + E.COL_OF[i]) * step}ms`);
+      cells[i] = c;
+      box.appendChild(c);
+    }
+    boardEl.appendChild(box);
   }
-  boardEl.appendChild(box);
+  let orn = '';
+  for (let x = 1; x < n / E.BC; x++) {
+    for (let y = 1; y < n / E.BR; y++) {
+      orn += `<svg style="left:${(x * E.BC * 100) / n}%;top:${(y * E.BR * 100) / n}%"><use href="#i-star"/></svg>`;
+    }
+  }
+  document.querySelector('.ornaments').innerHTML = orn;
+  pad.innerHTML = '';
+  keys.length = 0;
+  pad.style.setProperty('--pc', n === 12 ? 6 : n);
+  for (let d = 1; d <= n; d++) {
+    const k = document.createElement('button');
+    k.className = 'key';
+    k.innerHTML = `${d}<small></small>`;
+    k.setAttribute('aria-label', `Número ${d}`);
+    k.addEventListener('click', () => inputDigit(d));
+    keys.push(k);
+    pad.appendChild(k);
+  }
 }
 boardEl.addEventListener('pointerdown', (e) => {
   const c = e.target.closest('.cell');
@@ -335,34 +397,22 @@ boardEl.addEventListener('pointerdown', (e) => {
   select(+c.dataset.i);
 });
 
-const pad = $('pad');
-const keys = [];
-for (let d = 1; d <= 9; d++) {
-  const k = document.createElement('button');
-  k.className = 'key';
-  k.innerHTML = `${d}<small></small>`;
-  k.setAttribute('aria-label', `Número ${d}`);
-  k.addEventListener('click', () => inputDigit(d));
-  keys.push(k);
-  pad.appendChild(k);
-}
-
 let sel = -1;
 let notesMode = false;
 let hintState = null;
 let paused = false;
 
 const isGiven = (i) => G.puzzle[i] !== '.';
-const solAt = (i) => +G.solution[i];
+const solAt = (i) => M.valOf(G.solution[i]);
 
 function render() {
-  if (!G) return;
+  if (!G || builtN !== G.n) return;
   const s = S.settings;
   const sv = sel >= 0 ? G.values[sel] : 0;
   const sr = sel >= 0 ? E.ROW_OF[sel] : -1, sc = sel >= 0 ? E.COL_OF[sel] : -1, sb = sel >= 0 ? E.BOX_OF[sel] : -1;
   const zone = hintState ? new Set(hintState.zone) : null;
-  const counts = new Array(10).fill(0);
-  for (let i = 0; i < 81; i++) {
+  const counts = new Array(E.N + 1).fill(0);
+  for (let i = 0; i < E.NN; i++) {
     const v = G.values[i];
     counts[v]++;
     let cls = 'cell';
@@ -379,14 +429,14 @@ function render() {
     c.firstChild.textContent = v || '';
     const nm = v ? 0 : G.notes[i];
     const ns = c.lastChild.children;
-    for (let d = 1; d <= 9; d++) {
+    for (let d = 1; d <= E.N; d++) {
       const on = (nm >> (d - 1)) & 1;
       ns[d - 1].className = on ? (s.sameHighlight && sv === d ? 'on hl' : 'on') : '';
     }
     c.setAttribute('aria-label', `Fila ${E.ROW_OF[i] + 1}, columna ${E.COL_OF[i] + 1}: ${v || 'vacía'}`);
   }
   keys.forEach((k, idx) => {
-    const left = 9 - counts[idx + 1];
+    const left = E.N - counts[idx + 1];
     k.lastChild.textContent = left > 0 ? left : '';
     k.classList.toggle('spent', left <= 0);
   });
@@ -414,6 +464,8 @@ function flash(i, cls) {
 }
 
 function openGame() {
+  G.n ||= M.sizeOfStr(G.puzzle.length);
+  buildBoard();
   sel = -1; notesMode = false; hintState = null; paused = false;
   $('hintCard').hidden = true;
   boardEl.classList.remove('paused');
@@ -525,7 +577,7 @@ $('hintBtn').addEventListener('click', () => {
     render();
     return;
   }
-  const h = E.hint(G.values.slice(), [...G.solution].map(Number));
+  const h = E.hint(G.values.slice(), M.fromStr(G.solution));
   if (!h) return;
   let zone = [], title, text;
   if (h.tech === 'unsolved') {
@@ -543,10 +595,10 @@ $('hintBtn').addEventListener('click', () => {
     }
   } else {
     zone = h.step.cells.filter((i) => i !== h.cell);
-    title = E.TECH[h.step.t].name;
+    title = M.TECH[h.step.t].name;
     const ds = E.digitsOf(h.step.digits);
     text = TECH_HELP[h.step.t] ? TECH_HELP[h.step.t](ds[0], ds) : '';
-    if (h.tech !== h.step.t) text += ` Después necesitarás ${E.TECH[h.tech].name}.`;
+    if (h.tech !== h.step.t) text += ` Después necesitarás ${M.TECH[h.tech].name}.`;
   }
   sel = h.cell;
   hintState = { cell: h.cell, zone };
@@ -621,7 +673,7 @@ function openWin(record) {
   $('winTime').textContent = fmt(G.time);
   $('winErr').textContent = S.settings.showErrors ? G.errors : '—';
   $('winHints').textContent = G.hints;
-  const tech = E.TECH[G.tech]?.name;
+  const tech = M.TECH[G.tech]?.name;
   $('winNote').innerHTML = (tech ? `Este tablero exigía <b>${tech}</b>.` : '') + (record ? ' Nuevo mejor tiempo.' : '');
   const next = $('winNext');
   next.hidden = false;
@@ -669,7 +721,7 @@ $('fillNotesBtn').addEventListener('click', () => {
   $('moreDialog').close();
   snapshot();
   const cand = E.candidates(G.values);
-  for (let i = 0; i < 81; i++) if (!G.values[i]) G.notes[i] = cand[i];
+  for (let i = 0; i < E.NN; i++) if (!G.values[i]) G.notes[i] = cand[i];
   clearHint();
   render();
   persist();
@@ -677,7 +729,7 @@ $('fillNotesBtn').addEventListener('click', () => {
 $('clearNotesBtn').addEventListener('click', () => {
   $('moreDialog').close();
   snapshot();
-  G.notes = new Array(81).fill(0);
+  G.notes = new Array(E.NN).fill(0);
   render();
   persist();
 });
@@ -755,16 +807,19 @@ $('winDialog').addEventListener('cancel', (e) => e.preventDefault());
 addEventListener('keydown', (e) => {
   if (screen !== 'game' || document.querySelector('dialog[open]')) return;
   if (e.key >= '1' && e.key <= '9') { inputDigit(+e.key); return; }
-  if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') { $('eraseBtn').click(); return; }
+  if (E.N === 12) {
+    const extra = { 0: 10, a: 10, b: 11, c: 12 }[e.key.toLowerCase()];
+    if (extra) { inputDigit(extra); return; }
+  }
+  if (e.key === 'Backspace' || e.key === 'Delete' || (E.N === 9 && e.key === '0')) { $('eraseBtn').click(); return; }
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); return; }
   if (e.key.toLowerCase() === 'n') { notesMode = !notesMode; render(); return; }
-  const mv = { ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1 }[e.key];
+  const mv = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[e.key];
   if (mv) {
     e.preventDefault();
-    if (sel < 0) { select(40); return; }
-    const r = E.ROW_OF[sel], c = E.COL_OF[sel];
-    const nr = (r + (mv === 9 ? 1 : mv === -9 ? -1 : 0) + 9) % 9, nc = (c + (mv === 1 ? 1 : mv === -1 ? -1 : 0) + 9) % 9;
-    select(nr * 9 + nc);
+    const n = E.N;
+    if (sel < 0) { select(Math.floor(E.NN / 2)); return; }
+    select(((E.ROW_OF[sel] + mv[0] + n) % n) * n + ((E.COL_OF[sel] + mv[1] + n) % n));
   }
 });
 

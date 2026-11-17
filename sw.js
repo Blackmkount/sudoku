@@ -1,5 +1,5 @@
 // Service worker: permite jugar sin conexión una vez cargado.
-const VERSION = 'azulejo-v2';
+const VERSION = 'azulejo-v3';
 const FILES = [
   './',
   'index.html',
@@ -7,9 +7,7 @@ const FILES = [
   'js/app.js',
   'js/engine.js',
   'js/levels.js',
-  'fonts/bodoni-moda.woff2',
-  'fonts/bodoni-moda-italic.woff2',
-  'fonts/instrument-sans.woff2',
+  'fonts/poppins-400.woff2',
   'fonts/poppins-500.woff2',
   'fonts/poppins-600.woff2',
   'fonts/poppins-700.woff2',

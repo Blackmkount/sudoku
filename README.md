@@ -12,14 +12,14 @@ Sudoku para jugar en Safari desde el iPhone, sin niveles fáciles: el nivel 1 ya
 
 ## Categorías
 
-Hay 200 niveles en cuatro categorías. Cada tablero tiene solución única y se clasificó resolviéndolo con técnicas humanas, de modo que la categoría indica la técnica más difícil que hace falta usar.
+Hay 200 niveles en cuatro categorías: tres en 9×9 y Diabólico en 12×12. Cada tablero tiene solución única y se clasificó resolviéndolo con técnicas humanas, de modo que la categoría indica la técnica más difícil que hace falta usar.
 
-| Categoría | Niveles | Técnica que exige |
-|---|---|---|
-| Difícil | 50 | Pares y tríos (desnudos u ocultos) |
-| Experto | 50 | X-Wing, Swordfish y cuartetos |
-| Maestro | 50 | XY-Wing y XYZ-Wing |
-| Diabólico | 50 | Cadenas forzadas (suposición y contradicción) |
+| Categoría | Tablero | Niveles | Técnica que exige |
+|---|---|---|---|
+| Difícil | 9×9 | 50 | Pares y tríos (desnudos u ocultos) |
+| Experto | 9×9 | 50 | X-Wing, Swordfish y cuartetos |
+| Maestro | 9×9 | 50 | XY-Wing y XYZ-Wing |
+| Diabólico | 12×12, números del 1 al 12, cajas de 3×4 | 50 | Entre 4 y 24 cadenas forzadas por tablero |
 
 Ningún tablero se puede resolver solo con únicos (el método de los sudokus fáciles). Dentro de cada categoría los niveles van de menos a más exigentes y se desbloquean al completar el anterior.
 
@@ -43,7 +43,7 @@ Además:
 ```
 index.html              Pantallas y diálogos
 css/style.css           Diseño
-js/engine.js            Motor: solver, generador, calificador y pistas
+js/engine.js            Motor (9×9 y 12×12): solver, generador, calificador y pistas
 js/levels.js            Banco de niveles generado
 js/app.js               Lógica del juego e interfaz
 sw.js                   Caché para jugar sin conexión
@@ -53,10 +53,11 @@ tools/generate-levels.mjs  Generador del banco de niveles
 ## Regenerar los niveles
 
 ```
-node tools/generate-levels.mjs [semilla]
+node tools/generate-levels.mjs                   # todas las categorías
+node tools/generate-levels.mjs --only diabolico  # solo una
 ```
 
-El script genera tableros mínimos con simetría rotacional, comprueba que tengan solución única, los resuelve con técnicas humanas (únicos, candidatos bloqueados, pares, tríos, cuartetos, X-Wing, Swordfish, Jellyfish, XY-Wing, XYZ-Wing y cadenas forzadas) y elige 50 por categoría repartidos a lo largo de la curva de dificultad.
+El script genera tableros mínimos con simetría rotacional, comprueba que tengan solución única, los resuelve con técnicas humanas (únicos, candidatos bloqueados, pares, tríos, cuartetos, X-Wing, Swordfish, Jellyfish, XY-Wing, XYZ-Wing y cadenas forzadas) y elige 50 por categoría repartidos a lo largo de la curva de dificultad. Para Diabólico genera 1.500 tableros 12×12 válidos y se queda con los 50 del 15 % más difícil.
 
 ## Jugar en local
 
@@ -68,4 +69,4 @@ Y abre `http://localhost:8000`.
 
 ## Créditos
 
-Tipografías Poppins (números), Bodoni Moda (títulos) e Instrument Sans (textos), bajo licencia SIL Open Font License (ver `fonts/`).
+Tipografía Poppins, bajo licencia SIL Open Font License (ver `fonts/`).
