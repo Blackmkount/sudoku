@@ -68,4 +68,4 @@ Y abre `http://localhost:8000`.
 
 ## Créditos
 
-Tipografías Bodoni Moda e Instrument Sans, bajo licencia SIL Open Font License (ver `fonts/`).
+Tipografías Poppins (números), Bodoni Moda (títulos) e Instrument Sans (textos), bajo licencia SIL Open Font License (ver `fonts/`).

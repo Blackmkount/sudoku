@@ -15,6 +15,9 @@
   font-style: italic;
   font-display: swap;
 }
+@font-face { font-family: 'Poppins'; src: url(../fonts/poppins-500.woff2) format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Poppins'; src: url(../fonts/poppins-600.woff2) format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Poppins'; src: url(../fonts/poppins-700.woff2) format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 @font-face {
   font-family: 'Instrument Sans';
   src: url(../fonts/instrument-sans.woff2) format('woff2-variations'), url(../fonts/instrument-sans.woff2) format('woff2');
@@ -45,6 +48,7 @@
 
   --serif: 'Bodoni Moda', 'Didot', 'Bodoni 72', ui-serif, Georgia, serif;
   --sans: 'Instrument Sans', -apple-system, system-ui, sans-serif;
+  --num: 'Poppins', -apple-system, system-ui, sans-serif;
 
   --pad-x: max(16px, env(safe-area-inset-left));
   --safe-top: env(safe-area-inset-top);
@@ -186,8 +190,8 @@ svg { width: 24px; height: 24px; fill: currentColor; }
 }
 .tile span {
   display: grid; place-items: center;
-  font-family: var(--serif); font-weight: 600;
-  font-size: calc(var(--t) / 13); line-height: 1; min-height: 0; color: var(--ink);
+  font-family: var(--num); font-weight: 600;
+  font-size: calc(var(--t) / 14.5); line-height: 1; min-height: 0; color: var(--ink);
   border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
 }
 .tile span:nth-child(9n) { border-right: 0; }
@@ -195,7 +199,7 @@ svg { width: 24px; height: 24px; fill: currentColor; }
 .tile span:nth-child(n + 19):nth-child(-n + 27),
 .tile span:nth-child(n + 46):nth-child(-n + 54) { border-bottom: 1.5px solid var(--box); }
 .tile span:nth-child(n + 73) { border-bottom: 0; }
-.tile span.u { color: var(--cobalt); font-style: italic; }
+.tile span.u { color: var(--cobalt); font-weight: 500; }
 
 .hero-tier {
   margin: 0; font-family: var(--serif); font-style: italic;
@@ -259,15 +263,14 @@ svg { width: 24px; height: 24px; fill: currentColor; }
   aspect-ratio: 1; border-radius: 12px;
   display: grid; place-items: center; align-content: center;
   background: var(--surface); box-shadow: var(--shadow);
-  font-family: var(--serif); font-size: 22px; font-weight: 500;
-  font-variant-numeric: lining-nums;
+  font-family: var(--num); font-size: 19px; font-weight: 600;
   position: relative;
 }
 .lvl small { font-family: var(--sans); font-size: 10.5px; color: inherit; opacity: .8; margin-top: 1px; font-variant-numeric: tabular-nums; }
-.lvl.done { background: var(--cobalt); color: var(--on-cobalt); font-style: italic; }
+.lvl.done { background: var(--cobalt); color: var(--on-cobalt); }
 .lvl.current { box-shadow: inset 0 0 0 2px var(--cobalt), var(--shadow); }
 .lvl.locked { background: transparent; box-shadow: inset 0 0 0 1px var(--hair); color: var(--ink-soft); opacity: .55; }
-.lvl.locked { font-size: 18px; }
+.lvl.locked { font-size: 16px; font-weight: 500; }
 .lvl:not(.locked):active { transform: scale(.95); }
 
 /* ─── Juego ─── */
@@ -288,7 +291,7 @@ svg { width: 24px; height: 24px; fill: currentColor; }
   height: 36px; padding: 0 8px 0 12px; border-radius: 999px;
   display: inline-flex; align-items: center; gap: 4px;
   background: var(--surface); box-shadow: var(--shadow);
-  font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 500; min-width: 82px; justify-content: center;
+  font-family: var(--num); font-variant-numeric: tabular-nums; font-size: 14.5px; font-weight: 600; min-width: 82px; justify-content: center;
 }
 .timer svg { width: 18px; height: 18px; color: var(--ink-soft); }
 .timer.hidden-time #timer { display: none; }
@@ -326,16 +329,15 @@ svg { width: 24px; height: 24px; fill: currentColor; }
   transition: background-color .12s ease;
 }
 .cell .v {
-  font-family: var(--serif);
-  font-size: calc(var(--board) / 13.2);
-  font-weight: 500;
+  font-family: var(--num);
+  font-size: calc(var(--board) / 15);
+  font-weight: 600;
   line-height: 1;
-  font-variant-numeric: lining-nums;
-  font-variation-settings: 'opsz' 28;
+  padding-top: .08em;
   pointer-events: none;
 }
-.cell.given .v { color: var(--ink); font-weight: 600; }
-.cell.user .v { color: var(--cobalt); font-style: italic; }
+.cell.given .v { color: var(--ink); font-weight: 700; }
+.cell.user .v { color: var(--cobalt); font-weight: 500; }
 .cell.err .v { color: var(--error); }
 .cell.err { background: var(--error-bg); }
 .cell .n {
@@ -345,14 +347,15 @@ svg { width: 24px; height: 24px; fill: currentColor; }
 }
 .cell .n i {
   font-style: normal; display: grid; place-items: center;
-  font-size: calc(var(--board) / 36);
+  font-family: var(--num);
+  font-size: calc(var(--board) / 34);
   font-weight: 500; line-height: 1;
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
   visibility: hidden;
 }
 .cell .n i.on { visibility: visible; }
-.cell .n i.hl { color: var(--on-cobalt); background: var(--cobalt); border-radius: 4px; font-weight: 700; }
+.cell .n i.hl { color: var(--on-cobalt); background: var(--cobalt); border-radius: 4px; font-weight: 600; }
 
 .cell.peer { background: var(--peer); }
 .cell.same { background: var(--same); }
@@ -438,14 +441,14 @@ svg { width: 24px; height: 24px; fill: currentColor; }
   height: 58px; border-radius: 12px;
   background: var(--surface); box-shadow: var(--shadow);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-family: var(--serif); font-size: 30px; font-weight: 500; line-height: 1;
-  color: var(--ink);
+  font-family: var(--num); font-size: 26px; font-weight: 600; line-height: 1;
+  color: var(--ink); padding-top: 3px;
   transition: transform .08s ease;
 }
-.key small { font-family: var(--sans); font-size: 10px; color: var(--ink-soft); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.key small { font-family: var(--num); font-size: 10px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
 .key:active { transform: scale(.92); background: var(--peer); }
 .key.spent { opacity: .3; box-shadow: none; }
-.pad.notes .key { font-style: italic; color: var(--cobalt); font-size: 24px; }
+.pad.notes .key { color: var(--cobalt); font-size: 19px; font-weight: 500; }
 
 /* ─── Diálogos ─── */
 .sheet {
@@ -472,7 +475,7 @@ svg { width: 24px; height: 24px; fill: currentColor; }
 .win-stats div { padding: 14px 0; }
 .win-stats div + div { border-left: 1px solid var(--hair); }
 .win-stats dt { font-size: 12.5px; color: var(--ink-soft); }
-.win-stats dd { margin: 2px 0 0; font-family: var(--serif); font-size: 26px; font-weight: 500; font-variant-numeric: lining-nums tabular-nums; }
+.win-stats dd { margin: 4px 0 0; font-family: var(--num); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .win-note { margin: 14px 0 0; font-size: 14px; color: var(--ink-soft); }
 .win-note b { color: var(--ink); font-weight: 600; }
 
@@ -520,7 +523,7 @@ svg { width: 24px; height: 24px; fill: currentColor; }
 .stat-row .s-val { font-size: 14px; color: var(--ink-soft); text-align: right; }
 .stat-row .s-val b { color: var(--ink); font-weight: 600; }
 .stat-total { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; margin-bottom: 8px; }
-.stat-total dd { margin: 0; font-family: var(--serif); font-size: 30px; font-weight: 500; font-variant-numeric: lining-nums; }
+.stat-total dd { margin: 0; font-family: var(--num); font-size: 26px; font-weight: 600; }
 .stat-total dt { font-size: 12.5px; color: var(--ink-soft); }
 
 .toast {
@@ -536,13 +539,13 @@ svg { width: 24px; height: 24px; fill: currentColor; }
 
 /* Pantallas bajas (iPhone SE / Safari con barras) */
 @media (max-height: 700px) {
-  .key { height: 50px; font-size: 26px; }
+  .key { height: 50px; font-size: 23px; }
   .tool span { font-size: 11px; }
   .status { margin-bottom: 6px; padding-top: 4px; }
 }
 
 @media (min-height: 820px) {
-  .key { height: 64px; font-size: 32px; }
+  .key { height: 64px; font-size: 28px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
