@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Azulejo">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="Sudoku difícil desde el primer nivel. Diseñado para iPhone.">
+  <meta name="theme-color" content="#EEF2F8" id="themeColor">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/bodoni-moda.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <title>Azulejo — Sudoku difícil</title>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-erase" viewBox="0 0 24 24"><path d="M20 20H8.5L4.2 15.7a1.5 1.5 0 010-2.1L13.6 4.2a1.5 1.5 0 012.1 0l4.1 4.1a1.5 1.5 0 010 2.1L11 19.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 9l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 013 3L8 18.5 4 20z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 7l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+      <symbol id="i-hint" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0012 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 11V8.5a3.5 3.5 0 017 0V11" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 1.5c.9 4.6 2.4 6.6 4.6 7.9 1.6.9 3.6 1.6 5.9 2.6-2.3 1-4.3 1.7-5.9 2.6-2.2 1.3-3.7 3.3-4.6 7.9-.9-4.6-2.4-6.6-4.6-7.9C5.8 13.7 3.8 13 1.5 12c2.3-1 4.3-1.7 5.9-2.6C9.6 8.1 11.1 6.1 12 1.5z"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ─────────── Inicio ─────────── -->
+  <main id="home" class="screen is-active" aria-label="Inicio">
+    <header class="home-head">
+      <div>
+        <h1 class="wordmark">Azulejo</h1>
+        <p class="tagline">Sudoku sin niveles fáciles</p>
+      </div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Ajustes"><svg><use href="#i-gear"/></svg></button>
+    </header>
+
+    <section class="hero" id="hero">
+      <div class="tile" id="heroTile" aria-hidden="true"></div>
+      <div class="hero-text">
+        <p class="hero-tier" id="heroTier">Difícil</p>
+        <p class="hero-level" id="heroLevel">Nivel 1</p>
+        <p class="hero-note" id="heroNote">Requiere pares y tríos ocultos</p>
+        <button class="btn-primary" id="playBtn">Jugar</button>
+      </div>
+    </section>
+
+    <section class="tiers" aria-label="Categorías">
+      <h2 class="section-title">Categorías</h2>
+      <ol class="tier-list" id="tierList"></ol>
+    </section>
+
+    <section class="extras">
+      <button class="extra" id="dailyBtn">
+        <span class="extra-name">Desafío del día</span>
+        <span class="extra-sub" id="dailySub">Un Maestro o Diabólico nuevo cada día</span>
+      </button>
+      <button class="extra" id="quickBtn">
+        <span class="extra-name">Partida rápida</span>
+        <span class="extra-sub">Una variante aleatoria de la categoría que elijas</span>
+      </button>
+      <button class="extra" id="statsBtn">
+        <span class="extra-name">Estadísticas</span>
+        <span class="extra-sub" id="statsSub">Tus tiempos y racha</span>
+      </button>
+    </section>
+
+    <p class="install-tip" id="installTip" hidden>
+      Para jugar a pantalla completa, toca <b>Compartir</b> y luego <b>Añadir a pantalla de inicio</b>.
+      <button class="link-btn" id="installClose">Entendido</button>
+    </p>
+  </main>
+
+  <!-- ─────────── Niveles ─────────── -->
+  <main id="levels" class="screen" aria-label="Niveles">
+    <header class="bar">
+      <button class="icon-btn" data-go="home" aria-label="Volver"><svg><use href="#i-back"/></svg></button>
+      <h2 class="bar-title" id="levelsTitle">Difícil</h2>
+      <span class="bar-aside" id="levelsCount">0 de 50</span>
+    </header>
+    <p class="levels-desc" id="levelsDesc"></p>
+    <div class="level-grid" id="levelGrid"></div>
+  </main>
+
+  <!-- ─────────── Juego ─────────── -->
+  <main id="game" class="screen" aria-label="Partida">
+    <header class="bar game-bar">
+      <button class="icon-btn" id="exitBtn" aria-label="Salir"><svg><use href="#i-back"/></svg></button>
+      <div class="game-title">
+        <span class="g-tier" id="gTier">Difícil</span>
+        <span class="g-level" id="gLevel">Nivel 1</span>
+      </div>
+      <button class="timer" id="timerBtn" aria-label="Pausar">
+        <span id="timer">0:00</span><svg><use href="#i-pause"/></svg>
+      </button>
+    </header>
+
+    <div class="status">
+      <span id="errWrap">Errores <b id="errCount">0</b></span>
+      <span>Pistas <b id="hintCount">0</b></span>
+    </div>
+
+    <div class="board-wrap">
+      <div class="board" id="board" role="grid" aria-label="Tablero de sudoku"></div>
+      <div class="ornaments" aria-hidden="true">
+        <svg style="left:33.333%;top:33.333%"><use href="#i-star"/></svg>
+        <svg style="left:66.666%;top:33.333%"><use href="#i-star"/></svg>
+        <svg style="left:33.333%;top:66.666%"><use href="#i-star"/></svg>
+        <svg style="left:66.666%;top:66.666%"><use href="#i-star"/></svg>
+      </div>
+    </div>
+
+    <div class="controls">
+    <div class="tools" role="toolbar" aria-label="Herramientas">
+      <button class="tool" id="undoBtn"><svg><use href="#i-undo"/></svg><span>Deshacer</span></button>
+      <button class="tool" id="eraseBtn"><svg><use href="#i-erase"/></svg><span>Borrar</span></button>
+      <button class="tool" id="notesBtn" aria-pressed="false"><svg><use href="#i-pencil"/></svg><span>Notas</span><i class="tool-flag" id="notesFlag">No</i></button>
+      <button class="tool" id="hintBtn"><svg><use href="#i-hint"/></svg><span id="hintLabel">Pista</span></button>
+      <button class="tool" id="moreBtn"><svg><use href="#i-more"/></svg><span>Más</span></button>
+    </div>
+
+    <div class="pad" id="pad" aria-label="Números"></div>
+
+    <div class="hint-card" id="hintCard" hidden>
+      <p class="hint-tech" id="hintTech"></p>
+      <p class="hint-text" id="hintText"></p>
+      <div class="hint-actions">
+        <button class="btn-quiet" id="hintClose">Entendido</button>
+        <button class="btn-small" id="hintReveal">Revelar número</button>
+      </div>
+    </div>
+    </div>
+  </main>
+
+  <!-- ─────────── Diálogos ─────────── -->
+  <dialog class="sheet" id="winDialog">
+    <div class="sheet-body win">
+      <svg class="win-star"><use href="#i-star"/></svg>
+      <h3 class="sheet-title">Resuelto</h3>
+      <p class="sheet-sub" id="winSub">Difícil, nivel 1</p>
+      <dl class="win-stats">
+        <div><dt>Tiempo</dt><dd id="winTime">0:00</dd></div>
+        <div><dt>Errores</dt><dd id="winErr">0</dd></div>
+        <div><dt>Pistas</dt><dd id="winHints">0</dd></div>
+      </dl>
+      <p class="win-note" id="winNote"></p>
+      <div class="sheet-actions">
+        <button class="btn-primary" id="winNext">Siguiente nivel</button>
+        <button class="btn-quiet" id="winHome">Volver al inicio</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="pauseDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title">En pausa</h3>
+      <p class="sheet-sub" id="pauseSub">El reloj está detenido.</p>
+      <div class="sheet-actions">
+        <button class="btn-primary" id="resumeBtn">Seguir jugando</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="moreDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title">Opciones</h3>
+      <div class="menu">
+        <button class="menu-item" id="fillNotesBtn"><span>Rellenar notas</span><small>Escribe todos los candidatos posibles en cada celda vacía</small></button>
+        <button class="menu-item" id="clearNotesBtn"><span>Borrar todas las notas</span><small>Deja el tablero solo con números</small></button>
+        <button class="menu-item" id="restartBtn"><span>Reiniciar nivel</span><small>Vuelve al tablero inicial y pone el reloj a cero</small></button>
+        <button class="menu-item" id="settingsFromGame"><span>Ajustes</span><small>Errores, resaltado y tema</small></button>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-quiet" data-close>Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="settingsDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title">Ajustes</h3>
+      <div class="settings">
+        <label class="switch-row"><span><b>Marcar errores</b><small>Un número incorrecto se pinta en rojo y suma un error</small></span><input type="checkbox" data-setting="showErrors"><i></i></label>
+        <label class="switch-row"><span><b>Límite de tres errores</b><small>Al tercer error se pierde la partida</small></span><input type="checkbox" data-setting="errorLimit"><i></i></label>
+        <label class="switch-row"><span><b>Resaltar números iguales</b><small>Al tocar un 7, se iluminan todos los 7 y sus notas</small></span><input type="checkbox" data-setting="sameHighlight"><i></i></label>
+        <label class="switch-row"><span><b>Limpiar notas al escribir</b><small>Quita ese número de las notas de su fila, columna y caja</small></span><input type="checkbox" data-setting="autoNotes"><i></i></label>
+        <label class="switch-row"><span><b>Mostrar reloj</b><small>El tiempo se registra aunque lo ocultes</small></span><input type="checkbox" data-setting="showTimer"><i></i></label>
+        <div class="seg-row">
+          <b>Tema</b>
+          <div class="seg" role="radiogroup" aria-label="Tema">
+            <button role="radio" data-theme-opt="auto">Automático</button>
+            <button role="radio" data-theme-opt="light">Porcelana</button>
+            <button role="radio" data-theme-opt="dark">Cobalto</button>
+          </div>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-quiet" data-close>Listo</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="statsDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title">Estadísticas</h3>
+      <div class="stats" id="statsBody"></div>
+      <div class="sheet-actions">
+        <button class="btn-quiet" data-close>Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="quickDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title">Partida rápida</h3>
+      <p class="sheet-sub">Elige categoría. Cada partida es una variante nueva con la misma dificultad.</p>
+      <div class="menu" id="quickList"></div>
+      <div class="sheet-actions">
+        <button class="btn-quiet" data-close>Cancelar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="confirmDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title" id="confirmTitle">¿Seguro?</h3>
+      <p class="sheet-sub" id="confirmText"></p>
+      <div class="sheet-actions">
+        <button class="btn-primary" id="confirmYes">Sí</button>
+        <button class="btn-quiet" id="confirmNo">Cancelar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
