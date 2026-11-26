@@ -1,6 +1,8 @@
 -- ─────────────────────────────────────────────────────────────
 --  Azulejo · base de datos en Supabase
---  Pega este archivo completo en SQL Editor → New query → Run.
+--  Con la integración de GitHub (y "Deploy to production" activado)
+--  Supabase aplica esta migración sola al subir a main.
+--  También se puede pegar en SQL Editor → New query → Run.
 --  Se puede ejecutar más de una vez sin romper nada.
 -- ─────────────────────────────────────────────────────────────
 

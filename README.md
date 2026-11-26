@@ -53,12 +53,12 @@ Además:
 El juego funciona sin esto, pero las cuentas, la sincronización entre dispositivos y el ranking necesitan un proyecto gratuito de Supabase.
 
 1. Crea un proyecto en [supabase.com](https://supabase.com) (plan gratuito).
-2. En **SQL Editor → New query**, pega el contenido de [`supabase/schema.sql`](supabase/schema.sql) y pulsa **Run**. Crea las tablas de partidas guardadas y ranking, con reglas para que cada jugador solo pueda leer y escribir lo suyo.
+2. Crea las tablas de partidas guardadas y ranking, con reglas para que cada jugador solo pueda leer y escribir lo suyo. Si conectaste Supabase con GitHub (**Project Settings → Integrations**, directorio `.` y **Deploy to production** activado), se crean solas desde [`supabase/migrations`](supabase/migrations) al subir a `main`. Si no, pega ese archivo en **SQL Editor → New query** y pulsa **Run**.
 3. En **Authentication → URL Configuration**, pon como **Site URL** `https://blackmkount.github.io/sudoku/` y añádela también en **Redirect URLs**. Así los enlaces de los correos (activar cuenta y recuperar contraseña) vuelven al juego.
 4. Opcional, pero recomendable: en **Authentication → Sign In / Providers → Email**, desactiva **Confirm email**. Así la cuenta funciona al instante, sin esperar el correo. El correo integrado de Supabase solo envía unos pocos mensajes por hora.
 5. En **Project Settings → API** (o **API Keys**), copia la **Project URL** y la clave pública (**anon** o **publishable**) en [`js/config.js`](js/config.js).
 
-Las dos claves de `config.js` son públicas por diseño: la seguridad la ponen las reglas de `schema.sql`. Nunca pongas ahí la clave **service_role** ni la **secret**.
+Las dos claves de `config.js` son públicas por diseño: la seguridad la ponen las reglas de la migración. Nunca pongas ahí la clave **service_role** ni la **secret**.
 
 **Cómo se guarda:** cada dispositivo guarda en local y sube los cambios a la nube. Antes de subir, siempre trae lo que haya en la nube y lo combina. Monedas, pistas y vidas se cuentan por dispositivo, así que al combinar nada se duplica ni se pierde. El progreso se une quedándose con el mejor tiempo y las mejores estrellas de cada nivel.
 
@@ -83,7 +83,7 @@ js/catalog.js              Tienda, temas, logros y recompensas
 js/cloud.js                Cliente de Supabase (cuentas, guardado y ranking)
 js/config.js               Claves del proyecto de Supabase
 js/fx.js                   Sonido, vibración y efectos de victoria
-supabase/schema.sql        Tablas y reglas de seguridad
+supabase/migrations/       Tablas y reglas de seguridad (migración)
 sw.js                      Caché para jugar sin conexión
 tools/generate-levels.mjs  Generador del banco de niveles
 tools/mock-supabase.py     Supabase simulado para pruebas
