@@ -32,25 +32,43 @@
       <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
       <symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 11V8.5a3.5 3.5 0 017 0V11" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
       <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 1.5c.9 4.6 2.4 6.6 4.6 7.9 1.6.9 3.6 1.6 5.9 2.6-2.3 1-4.3 1.7-5.9 2.6-2.2 1.3-3.7 3.3-4.6 7.9-.9-4.6-2.4-6.6-4.6-7.9C5.8 13.7 3.8 13 1.5 12c2.3-1 4.3-1.7 5.9-2.6C9.6 8.1 11.1 6.1 12 1.5z"/></symbol>
+      <symbol id="i-rate" viewBox="0 0 24 24"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z" stroke-linejoin="round"/></symbol>
+      <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#E7B53C"/><circle cx="12" cy="12" r="7.2" fill="none" stroke="#B9871C" stroke-width="1.6"/><path d="M12 7.6l1.3 3.1 3.1 1.3-3.1 1.3L12 16.4l-1.3-3.1L7.6 12l3.1-1.3z" fill="#B9871C"/></symbol>
+      <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10V6.5a3 3 0 016 0V10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 01-10 0V4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 6H4v1.5A3.5 3.5 0 007.5 11M17 6h3v1.5a3.5 3.5 0 01-3.5 3.5M12 14v4M8.5 20h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 015.5 4H11v16H5.5A1.5 1.5 0 014 18.5v-13zM20 5.5A1.5 1.5 0 0018.5 4H13v16h5.5a1.5 1.5 0 001.5-1.5v-13z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0112 7.3 4.3 4.3 0 0119.5 10c0 5.4-7.5 10-7.5 10z" stroke-linejoin="round"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18h10.5a4 4 0 00.6-8A6 6 0 006.5 9.5 4.3 4.3 0 007 18z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" stroke-linejoin="round"/></symbol>
     </defs>
   </svg>
 
   <!-- ─────────── Inicio ─────────── -->
   <main id="home" class="screen is-active" aria-label="Inicio">
-    <header class="home-head">
-      <div>
-        <h1 class="wordmark">Azulejo</h1>
-        <p class="tagline">Sudoku sin niveles fáciles</p>
+    <header class="topbar">
+      <button class="me-chip" id="meChip" aria-label="Abrir perfil">
+        <span class="avatar" id="meAvatar">🦉</span>
+        <span class="me-text"><b id="meName">Invitado</b><small id="meState">Perfil en este teléfono</small></span>
+      </button>
+      <div class="topbar-right">
+        <button class="coin-pill" id="coinPill" aria-label="Monedas. Abrir la tienda"><svg><use href="#i-coin"/></svg><span id="coinCount">0</span></button>
+        <button class="icon-btn" id="settingsBtn" aria-label="Ajustes"><svg><use href="#i-gear"/></svg></button>
       </div>
-      <button class="icon-btn" id="settingsBtn" aria-label="Ajustes"><svg><use href="#i-gear"/></svg></button>
     </header>
+
+    <div class="brand">
+      <h1 class="wordmark">Azulejo</h1>
+      <p class="tagline">Sudoku sin niveles fáciles</p>
+    </div>
 
     <section class="hero" id="hero">
       <div class="tile" id="heroTile" aria-hidden="true"></div>
       <div class="hero-text">
         <p class="hero-tier" id="heroTier">Difícil</p>
         <p class="hero-level" id="heroLevel">Nivel 1</p>
-        <p class="hero-note" id="heroNote">Requiere pares y tríos ocultos</p>
+        <p class="hero-note" id="heroNote"></p>
         <button class="btn-primary" id="playBtn">Jugar</button>
       </div>
     </section>
@@ -64,19 +82,22 @@
       <button class="extra" id="dailyBtn">
         <span class="extra-name">Desafío del día</span>
         <span class="extra-sub" id="dailySub">Un Maestro o Diabólico nuevo cada día</span>
+        <span class="extra-reward" id="dailyReward"></span>
       </button>
       <button class="extra" id="quickBtn">
         <span class="extra-name">Partida rápida</span>
         <span class="extra-sub">Una variante aleatoria de la categoría que elijas</span>
       </button>
-      <button class="extra" id="statsBtn">
-        <span class="extra-name">Estadísticas</span>
-        <span class="extra-sub" id="statsSub">Tus tiempos y racha</span>
-      </button>
+      <div class="extra-grid">
+        <button class="tile-btn" id="shopBtn"><svg><use href="#i-bag"/></svg><b>Tienda</b><small>Temas, avatares y pistas</small></button>
+        <button class="tile-btn" id="rankBtn"><svg><use href="#i-trophy"/></svg><b>Ranking</b><small id="rankSub">Compite con otros jugadores</small></button>
+        <button class="tile-btn" id="techBtn"><svg><use href="#i-book"/></svg><b>Técnicas</b><small>Aprende a resolver</small></button>
+        <button class="tile-btn" id="statsBtn"><svg><use href="#i-chart"/></svg><b>Estadísticas</b><small id="statsSub">Tus tiempos</small></button>
+      </div>
     </section>
 
     <p class="install-tip" id="installTip" hidden>
-      Para jugar a pantalla completa, toca <b>Compartir</b> y luego <b>Añadir a pantalla de inicio</b>.
+      Para jugar a pantalla completa, toca <b>Compartir</b> y luego <b>Añadir a pantalla de inicio</b>. Así Safari tampoco borra tus datos.
       <button class="link-btn" id="installClose">Entendido</button>
     </p>
   </main>
@@ -90,6 +111,66 @@
     </header>
     <p class="levels-desc" id="levelsDesc"></p>
     <div class="level-grid" id="levelGrid"></div>
+  </main>
+
+  <!-- ─────────── Perfil ─────────── -->
+  <main id="profile" class="screen" aria-label="Perfil">
+    <header class="bar">
+      <button class="icon-btn" data-go="home" aria-label="Volver"><svg><use href="#i-back"/></svg></button>
+      <h2 class="bar-title">Perfil</h2>
+      <span></span>
+    </header>
+    <section class="me-card">
+      <button class="avatar avatar-xl" id="pAvatar" aria-label="Cambiar avatar">🦉</button>
+      <div class="me-card-text">
+        <label class="visually-hidden" for="pName">Nombre</label>
+        <input id="pName" class="name-input" maxlength="20" placeholder="Tu nombre" autocomplete="nickname" enterkeyhint="done">
+        <p class="me-sub" id="pSub">Toca tu avatar para cambiarlo</p>
+      </div>
+    </section>
+    <section class="account" id="accountBox"></section>
+    <dl class="me-stats" id="pStats"></dl>
+    <h3 class="section-title section-split">Logros <small id="achCount"></small></h3>
+    <ul class="achievements" id="achList"></ul>
+  </main>
+
+  <!-- ─────────── Tienda ─────────── -->
+  <main id="shop" class="screen" aria-label="Tienda">
+    <header class="bar">
+      <button class="icon-btn" id="shopBack" aria-label="Volver"><svg><use href="#i-back"/></svg></button>
+      <h2 class="bar-title">Tienda</h2>
+      <span class="coin-pill static"><svg><use href="#i-coin"/></svg><span id="shopCoins">0</span></span>
+    </header>
+    <p class="shop-note">Ganas monedas al resolver niveles. Con tres estrellas ganas el doble.</p>
+    <div class="seg shop-tabs" role="tablist" aria-label="Secciones de la tienda">
+      <button role="tab" data-tab="help">Ayudas</button>
+      <button role="tab" data-tab="themes">Temas</button>
+      <button role="tab" data-tab="avatars">Avatares</button>
+      <button role="tab" data-tab="effects">Efectos</button>
+    </div>
+    <div class="shop-list" id="shopList"></div>
+  </main>
+
+  <!-- ─────────── Ranking ─────────── -->
+  <main id="ranking" class="screen" aria-label="Ranking">
+    <header class="bar">
+      <button class="icon-btn" data-go="home" aria-label="Volver"><svg><use href="#i-back"/></svg></button>
+      <h2 class="bar-title">Ranking</h2>
+      <span class="bar-aside" id="rankAside"></span>
+    </header>
+    <p class="levels-desc">Cada nivel suma puntos según su categoría y tus estrellas. El desafío del día suma 30.</p>
+    <div id="rankBody" class="rank-body"></div>
+  </main>
+
+  <!-- ─────────── Técnicas ─────────── -->
+  <main id="techniques" class="screen" aria-label="Técnicas">
+    <header class="bar">
+      <button class="icon-btn" id="techBack" aria-label="Volver"><svg><use href="#i-back"/></svg></button>
+      <h2 class="bar-title">Técnicas</h2>
+      <span></span>
+    </header>
+    <p class="levels-desc">De la más sencilla a la más difícil. Las pistas te señalan cuál usar en cada momento.</p>
+    <ol class="tech-list" id="techList"></ol>
   </main>
 
   <!-- ─────────── Juego ─────────── -->
@@ -107,45 +188,40 @@
 
     <div class="status">
       <span id="errWrap">Errores <b id="errCount">0</b></span>
-      <span>Pistas <b id="hintCount">0</b></span>
+      <span class="live-stars" id="liveStars" aria-label="Estrellas posibles"></span>
     </div>
 
     <div class="board-wrap">
       <div class="board" id="board" role="grid" aria-label="Tablero de sudoku"></div>
-      <div class="ornaments" aria-hidden="true">
-        <svg style="left:33.333%;top:33.333%"><use href="#i-star"/></svg>
-        <svg style="left:66.666%;top:33.333%"><use href="#i-star"/></svg>
-        <svg style="left:33.333%;top:66.666%"><use href="#i-star"/></svg>
-        <svg style="left:66.666%;top:66.666%"><use href="#i-star"/></svg>
-      </div>
+      <div class="ornaments" aria-hidden="true"></div>
     </div>
 
     <div class="controls">
-    <div class="tools" role="toolbar" aria-label="Herramientas">
-      <button class="tool" id="undoBtn"><svg><use href="#i-undo"/></svg><span>Deshacer</span></button>
-      <button class="tool" id="eraseBtn"><svg><use href="#i-erase"/></svg><span>Borrar</span></button>
-      <button class="tool" id="notesBtn" aria-pressed="false"><svg><use href="#i-pencil"/></svg><span>Notas</span><i class="tool-flag" id="notesFlag">No</i></button>
-      <button class="tool" id="hintBtn"><svg><use href="#i-hint"/></svg><span id="hintLabel">Pista</span></button>
-      <button class="tool" id="moreBtn"><svg><use href="#i-more"/></svg><span>Más</span></button>
-    </div>
-
-    <div class="pad" id="pad" aria-label="Números"></div>
-
-    <div class="hint-card" id="hintCard" hidden>
-      <p class="hint-tech" id="hintTech"></p>
-      <p class="hint-text" id="hintText"></p>
-      <div class="hint-actions">
-        <button class="btn-quiet" id="hintClose">Entendido</button>
-        <button class="btn-small" id="hintReveal">Revelar número</button>
+      <div class="tools" role="toolbar" aria-label="Herramientas">
+        <button class="tool" id="undoBtn"><svg><use href="#i-undo"/></svg><span>Deshacer</span></button>
+        <button class="tool" id="eraseBtn"><svg><use href="#i-erase"/></svg><span>Borrar</span></button>
+        <button class="tool" id="notesBtn" aria-pressed="false"><svg><use href="#i-pencil"/></svg><span>Notas</span><i class="tool-flag" id="notesFlag">No</i></button>
+        <button class="tool" id="hintBtn"><svg><use href="#i-hint"/></svg><span id="hintLabel">Pista</span><i class="tool-flag gold" id="hintFlag">0</i></button>
+        <button class="tool" id="moreBtn"><svg><use href="#i-more"/></svg><span>Más</span></button>
       </div>
-    </div>
+
+      <div class="pad" id="pad" aria-label="Números"></div>
+
+      <div class="hint-card" id="hintCard" hidden>
+        <p class="hint-tech" id="hintTech"></p>
+        <p class="hint-text" id="hintText"></p>
+        <div class="hint-actions">
+          <button class="btn-quiet" id="hintClose">Entendido</button>
+          <button class="btn-small" id="hintReveal">Revelar número</button>
+        </div>
+      </div>
     </div>
   </main>
 
   <!-- ─────────── Diálogos ─────────── -->
   <dialog class="sheet" id="winDialog">
     <div class="sheet-body win">
-      <svg class="win-star"><use href="#i-star"/></svg>
+      <div class="win-stars" id="winStars" aria-hidden="true"></div>
       <h3 class="sheet-title">Resuelto</h3>
       <p class="sheet-sub" id="winSub">Difícil, nivel 1</p>
       <dl class="win-stats">
@@ -153,6 +229,10 @@
         <div><dt>Errores</dt><dd id="winErr">0</dd></div>
         <div><dt>Pistas</dt><dd id="winHints">0</dd></div>
       </dl>
+      <div class="reward">
+        <p class="reward-total"><svg><use href="#i-coin"/></svg><b id="winCoins">+0</b><span>monedas</span></p>
+        <ul class="reward-lines" id="winLines"></ul>
+      </div>
       <p class="win-note" id="winNote"></p>
       <div class="sheet-actions">
         <button class="btn-primary" id="winNext">Siguiente nivel</button>
@@ -178,7 +258,8 @@
         <button class="menu-item" id="fillNotesBtn"><span>Rellenar notas</span><small>Escribe todos los candidatos posibles en cada celda vacía</small></button>
         <button class="menu-item" id="clearNotesBtn"><span>Borrar todas las notas</span><small>Deja el tablero solo con números</small></button>
         <button class="menu-item" id="restartBtn"><span>Reiniciar nivel</span><small>Vuelve al tablero inicial y pone el reloj a cero</small></button>
-        <button class="menu-item" id="settingsFromGame"><span>Ajustes</span><small>Errores, resaltado y tema</small></button>
+        <button class="menu-item" id="techFromGame"><span>Guía de técnicas</span><small>Repasa cómo funciona cada técnica</small></button>
+        <button class="menu-item" id="settingsFromGame"><span>Ajustes</span><small>Errores, sonido, vibración y tema</small></button>
       </div>
       <div class="sheet-actions">
         <button class="btn-quiet" data-close>Cerrar</button>
@@ -191,17 +272,16 @@
       <h3 class="sheet-title">Ajustes</h3>
       <div class="settings">
         <label class="switch-row"><span><b>Marcar errores</b><small>Un número incorrecto se pinta en rojo y suma un error</small></span><input type="checkbox" data-setting="showErrors"><i></i></label>
-        <label class="switch-row"><span><b>Límite de tres errores</b><small>Al tercer error se pierde la partida</small></span><input type="checkbox" data-setting="errorLimit"><i></i></label>
+        <label class="switch-row"><span><b>Límite de tres errores</b><small>Al tercer error pierdes, salvo que uses una vida extra</small></span><input type="checkbox" data-setting="errorLimit"><i></i></label>
         <label class="switch-row"><span><b>Resaltar números iguales</b><small>Al tocar un 7, se iluminan todos los 7 y sus notas</small></span><input type="checkbox" data-setting="sameHighlight"><i></i></label>
         <label class="switch-row"><span><b>Limpiar notas al escribir</b><small>Quita ese número de las notas de su fila, columna y caja</small></span><input type="checkbox" data-setting="autoNotes"><i></i></label>
         <label class="switch-row"><span><b>Mostrar reloj</b><small>El tiempo se registra aunque lo ocultes</small></span><input type="checkbox" data-setting="showTimer"><i></i></label>
+        <label class="switch-row"><span><b>Sonido</b><small>Efectos suaves; respeta el modo silencio del iPhone</small></span><input type="checkbox" data-setting="sound"><i></i></label>
+        <label class="switch-row"><span><b>Vibración</b><small>Un toque al escribir, al fallar y al completar</small></span><input type="checkbox" data-setting="haptics"><i></i></label>
         <div class="seg-row">
           <b>Tema</b>
-          <div class="seg" role="radiogroup" aria-label="Tema">
-            <button role="radio" data-theme-opt="auto">Automático</button>
-            <button role="radio" data-theme-opt="light">Porcelana</button>
-            <button role="radio" data-theme-opt="dark">Cobalto</button>
-          </div>
+          <div class="theme-chips" id="themeChips"></div>
+          <button class="link-btn left" id="moreThemes">Ver más temas en la tienda</button>
         </div>
       </div>
       <div class="sheet-actions">
@@ -227,6 +307,60 @@
       <div class="menu" id="quickList"></div>
       <div class="sheet-actions">
         <button class="btn-quiet" data-close>Cancelar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="welcomeDialog">
+    <form class="sheet-body" id="welcomeForm" method="dialog">
+      <h3 class="sheet-title">Te damos la bienvenida a Azulejo</h3>
+      <p class="sheet-sub">Elige cómo te verán los demás. Lo puedes cambiar cuando quieras.</p>
+      <label class="field"><span>Tu nombre</span><input id="wName" maxlength="20" placeholder="Por ejemplo, Lucía" autocomplete="nickname" enterkeyhint="done"></label>
+      <div class="avatar-row" id="wAvatars" role="radiogroup" aria-label="Avatar"></div>
+      <p class="gift"><svg><use href="#i-coin"/></svg>Te regalamos 50 monedas, 5 pistas y 1 vida extra.</p>
+      <div class="sheet-actions">
+        <button class="btn-primary" id="wStart" type="submit">Empezar a jugar</button>
+        <button class="btn-quiet" id="wLogin" type="button">Ya tengo una cuenta</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="sheet" id="authDialog">
+    <form class="sheet-body" id="authForm" novalidate>
+      <h3 class="sheet-title" id="authTitle">Crear cuenta</h3>
+      <p class="sheet-sub" id="authSub"></p>
+      <label class="field" id="authNameField"><span>Nombre</span><input id="authName" maxlength="20" autocomplete="nickname"></label>
+      <label class="field" id="authEmailField"><span>Correo</span><input id="authEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false"></label>
+      <label class="field" id="authPassField"><span>Contraseña</span><input id="authPass" type="password" autocomplete="current-password" minlength="6"></label>
+      <p class="form-msg" id="authMsg" role="alert"></p>
+      <div class="sheet-actions">
+        <button class="btn-primary" id="authSubmit" type="submit">Crear cuenta</button>
+        <button class="btn-quiet" id="authSwitch" type="button">Ya tengo una cuenta</button>
+        <button class="link-btn center" id="authForgot" type="button">Olvidé mi contraseña</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="sheet" id="passwordDialog">
+    <form class="sheet-body" id="passwordForm" novalidate>
+      <h3 class="sheet-title">Nueva contraseña</h3>
+      <p class="sheet-sub">Escribe la contraseña que usarás a partir de ahora.</p>
+      <label class="field"><span>Contraseña nueva</span><input id="newPass" type="password" autocomplete="new-password" minlength="6"></label>
+      <p class="form-msg" id="passMsg" role="alert"></p>
+      <div class="sheet-actions">
+        <button class="btn-primary" type="submit">Guardar contraseña</button>
+        <button class="btn-quiet" type="button" data-close>Ahora no</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="sheet" id="avatarDialog">
+    <div class="sheet-body">
+      <h3 class="sheet-title">Elige tu avatar</h3>
+      <p class="sheet-sub">Los que tienen precio se compran con monedas.</p>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <div class="sheet-actions">
+        <button class="btn-quiet" data-close>Listo</button>
       </div>
     </div>
   </dialog>

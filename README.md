@@ -28,26 +28,65 @@ Además:
 - **Desafío del día:** un tablero Maestro o Diabólico distinto cada día, igual para todos. Lleva la cuenta de tu racha.
 - **Partida rápida:** una variante aleatoria de la categoría que elijas (mismos niveles, transformados con permutaciones que conservan la dificultad).
 
-## Funciones
+## Perfil, monedas y tienda
+
+- **Perfil:** nombre y avatar. Sin cuenta se guarda en el teléfono; con cuenta, en la nube.
+- **Estrellas:** 3 sin pistas ni errores, 2 sin pistas, 1 con pistas. Se ven en vivo durante la partida.
+- **Monedas:** cada nivel da monedas según su categoría (Difícil 20, Experto 30, Maestro 45, Diabólico 80) y se duplican con tres estrellas. El desafío del día da 60 más un extra por racha y una pista de regalo. Al empezar recibes 50 monedas, 5 pistas y 1 vida extra.
+- **Tienda:** pistas, vidas extra (para seguir tras el tercer error), 6 temas de color, 12 avatares y 2 efectos de victoria.
+- **Logros:** 15 logros con premio en monedas.
+- **Ranking:** cada nivel suma puntos según su categoría y tus estrellas (requiere cuenta).
+
+## Funciones de juego
 
 - Notas (lápiz), rellenar todas las notas y limpieza automática de notas al escribir.
 - Deshacer ilimitado dentro de la partida.
-- Pistas que enseñan: primero señalan la celda y explican la técnica (con las celdas del patrón resaltadas en dorado); si tocas otra vez, revelan el número.
+- Pistas que enseñan: señalan la celda y explican la técnica (con las celdas del patrón en dorado); después pueden revelar el número.
+- Guía de técnicas, de la más sencilla a la más difícil.
 - Errores marcados en rojo y límite opcional de tres errores.
 - Resaltado de fila, columna, caja y números iguales (incluidas las notas).
-- Reloj con pausa, progreso y mejores tiempos guardados en el dispositivo.
-- Tema claro (Porcelana), oscuro (Cobalto) o automático.
+- Destello al completar una fila, columna o caja; sonidos suaves y vibración en iPhone (iOS 18 o posterior), ambos desactivables.
+- Reloj con pausa, mejores tiempos y estadísticas.
+
+## Activar las cuentas en la nube (Supabase)
+
+El juego funciona sin esto, pero las cuentas, la sincronización entre dispositivos y el ranking necesitan un proyecto gratuito de Supabase.
+
+1. Crea un proyecto en [supabase.com](https://supabase.com) (plan gratuito).
+2. En **SQL Editor → New query**, pega el contenido de [`supabase/schema.sql`](supabase/schema.sql) y pulsa **Run**. Crea las tablas de partidas guardadas y ranking, con reglas para que cada jugador solo pueda leer y escribir lo suyo.
+3. En **Authentication → URL Configuration**, pon como **Site URL** `https://blackmkount.github.io/sudoku/` y añádela también en **Redirect URLs**. Así los enlaces de los correos (activar cuenta y recuperar contraseña) vuelven al juego.
+4. Opcional, pero recomendable: en **Authentication → Sign In / Providers → Email**, desactiva **Confirm email**. Así la cuenta funciona al instante, sin esperar el correo. El correo integrado de Supabase solo envía unos pocos mensajes por hora.
+5. En **Project Settings → API** (o **API Keys**), copia la **Project URL** y la clave pública (**anon** o **publishable**) en [`js/config.js`](js/config.js).
+
+Las dos claves de `config.js` son públicas por diseño: la seguridad la ponen las reglas de `schema.sql`. Nunca pongas ahí la clave **service_role** ni la **secret**.
+
+**Cómo se guarda:** cada dispositivo guarda en local y sube los cambios a la nube. Antes de subir, siempre trae lo que haya en la nube y lo combina. Monedas, pistas y vidas se cuentan por dispositivo, así que al combinar nada se duplica ni se pierde. El progreso se une quedándose con el mejor tiempo y las mejores estrellas de cada nivel.
+
+Para probar las cuentas en local sin Supabase hay un servidor simulado:
+
+```
+python3 tools/mock-supabase.py 54321
+```
+
+Y en la consola del navegador (en `localhost`): `localStorage['azulejo.cloud.dev'] = JSON.stringify({url: 'http://localhost:54321', key: 'dev'})`.
 
 ## Estructura
 
 ```
-index.html              Pantallas y diálogos
-css/style.css           Diseño
-js/engine.js            Motor (9×9 y 12×12): solver, generador, calificador y pistas
-js/levels.js            Banco de niveles generado
-js/app.js               Lógica del juego e interfaz
-sw.js                   Caché para jugar sin conexión
+index.html                 Pantallas y diálogos
+css/style.css              Diseño
+js/engine.js               Motor (9×9 y 12×12): solver, generador, calificador y pistas
+js/levels.js               Banco de niveles generado
+js/app.js                  Lógica del juego e interfaz
+js/store.js                Estado del jugador, migraciones y combinación entre dispositivos
+js/catalog.js              Tienda, temas, logros y recompensas
+js/cloud.js                Cliente de Supabase (cuentas, guardado y ranking)
+js/config.js               Claves del proyecto de Supabase
+js/fx.js                   Sonido, vibración y efectos de victoria
+supabase/schema.sql        Tablas y reglas de seguridad
+sw.js                      Caché para jugar sin conexión
 tools/generate-levels.mjs  Generador del banco de niveles
+tools/mock-supabase.py     Supabase simulado para pruebas
 ```
 
 ## Regenerar los niveles

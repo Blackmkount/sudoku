@@ -1,5 +1,5 @@
 // Service worker: permite jugar sin conexión una vez cargado.
-const VERSION = 'azulejo-v3';
+const VERSION = 'azulejo-v4';
 const FILES = [
   './',
   'index.html',
@@ -7,6 +7,11 @@ const FILES = [
   'js/app.js',
   'js/engine.js',
   'js/levels.js',
+  'js/catalog.js',
+  'js/store.js',
+  'js/cloud.js',
+  'js/config.js',
+  'js/fx.js',
   'fonts/poppins-400.woff2',
   'fonts/poppins-500.woff2',
   'fonts/poppins-600.woff2',
