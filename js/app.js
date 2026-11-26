@@ -1270,7 +1270,7 @@ function openAuth(mode) {
   if (!$('authDialog').open) $('authDialog').showModal();
 }
 $('authSwitch').addEventListener('click', () => {
-  if (authMode === 'done') { $('authDialog').close(); return; }
+  if (authMode === 'done') { openAuth('signin'); return; }
   openAuth(authMode === 'signup' ? 'signin' : authMode === 'signin' ? 'signup' : 'signin');
 });
 $('authForgot').addEventListener('click', () => openAuth('recover'));
@@ -1294,10 +1294,10 @@ $('authForm').addEventListener('submit', async (e) => {
       if (r.confirm) {
         try { localStorage.setItem('azulejo.pendingName', name); } catch (_) { /* nada */ }
         msg.className = 'form-msg ok';
-        msg.textContent = `Te enviamos un correo a ${email}. Ábrelo en este teléfono para activar la cuenta.`;
+        msg.textContent = `Te enviamos un correo a ${email}. Toca el enlace para activar la cuenta y después vuelve aquí e inicia sesión.`;
         authMode = 'done';
         btn.hidden = true;
-        $('authSwitch').textContent = 'Cerrar';
+        $('authSwitch').textContent = 'Ya la activé: iniciar sesión';
         return;
       }
       $('authDialog').close();

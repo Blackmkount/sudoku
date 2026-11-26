@@ -1,5 +1,5 @@
 // Service worker: permite jugar sin conexión una vez cargado.
-const VERSION = 'azulejo-v4';
+const VERSION = 'azulejo-v5';
 const FILES = [
   './',
   'index.html',

@@ -6,5 +6,5 @@
 //  Ambas son públicas por diseño: la seguridad la ponen las reglas de supabase/migrations.
 //  Mientras estén vacías, el juego funciona sin cuentas (perfil en el teléfono).
 // ─────────────────────────────────────────────────────────────
-export const SUPABASE_URL = '';
-export const SUPABASE_KEY = '';
+export const SUPABASE_URL = 'https://ndpipaxkzuumeqlsqsnf.supabase.co';
+export const SUPABASE_KEY = 'sb_publishable_JkbqLzPSsJd5bAePRQ4Rdg_8YjiudIE';
