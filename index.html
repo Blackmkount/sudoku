@@ -41,6 +41,8 @@
       <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0112 7.3 4.3 4.3 0 0119.5 10c0 5.4-7.5 10-7.5 10z" stroke-linejoin="round"/></symbol>
       <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18h10.5a4 4 0 00.6-8A6 6 0 006.5 9.5 4.3 4.3 0 007 18z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-flower" viewBox="0 0 24 24"><circle cx="12" cy="6.2" r="4.3"/><circle cx="17.5" cy="10.2" r="4.3"/><circle cx="15.4" cy="16.8" r="4.3"/><circle cx="8.6" cy="16.8" r="4.3"/><circle cx="6.5" cy="10.2" r="4.3"/><circle cx="12" cy="12" r="2.8" fill="#fff" opacity=".85"/></symbol>
+      <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3.5L3.5 6.5l2 4 2-1V20.5h9V9.5l2 1 2-4L16 3.5c-.8 1.6-2.2 2.5-4 2.5s-3.2-.9-4-2.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
       <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" stroke-linejoin="round"/></symbol>
     </defs>
   </svg>
@@ -125,7 +127,7 @@
       <div class="me-card-text">
         <label class="visually-hidden" for="pName">Nombre</label>
         <input id="pName" class="name-input" maxlength="20" placeholder="Tu nombre" autocomplete="nickname" enterkeyhint="done">
-        <p class="me-sub" id="pSub">Toca tu avatar para cambiarlo</p>
+        <p class="me-sub" id="pSub">Toca tu avatar para abrir el vestidor</p>
       </div>
     </section>
     <section class="account" id="accountBox"></section>
@@ -145,10 +147,30 @@
     <div class="seg shop-tabs" role="tablist" aria-label="Secciones de la tienda">
       <button role="tab" data-tab="help">Ayudas</button>
       <button role="tab" data-tab="themes">Temas</button>
-      <button role="tab" data-tab="avatars">Avatares</button>
+      <button role="tab" data-tab="avatars">Avatar</button>
       <button role="tab" data-tab="effects">Efectos</button>
     </div>
     <div class="shop-list" id="shopList"></div>
+  </main>
+
+  <!-- ─────────── Vestidor ─────────── -->
+  <main id="wardrobe" class="screen" aria-label="Vestidor">
+    <header class="bar">
+      <button class="icon-btn" id="wdBack" aria-label="Volver"><svg><use href="#i-back"/></svg></button>
+      <h2 class="bar-title">Vestidor</h2>
+      <span class="coin-pill static"><svg><use href="#i-coin"/></svg><span id="wdCoins">0</span></span>
+    </header>
+    <div class="wd-stage">
+      <div class="wd-avatar" id="wdAvatar"></div>
+      <p class="wd-note" id="wdNote"></p>
+    </div>
+    <div class="wd-cats" id="wdCats" role="tablist" aria-label="Partes del avatar"></div>
+    <div class="wd-grid" id="wdGrid"></div>
+    <div class="wd-buy" id="wdBuy" hidden>
+      <div class="wd-buy-text"><b id="wdItem"></b><small id="wdPrice"></small></div>
+      <button class="btn-quiet" id="wdUndo">Quitar</button>
+      <button class="btn-small" id="wdBuyBtn">Comprar</button>
+    </div>
   </main>
 
   <!-- ─────────── Ranking ─────────── -->
@@ -314,7 +336,7 @@
   <dialog class="sheet" id="welcomeDialog">
     <form class="sheet-body" id="welcomeForm" method="dialog">
       <h3 class="sheet-title">Te damos la bienvenida a Azulejo</h3>
-      <p class="sheet-sub">Elige cómo te verán los demás. Lo puedes cambiar cuando quieras.</p>
+      <p class="sheet-sub">Elige tu personaje. Luego podrás cambiarle el peinado, la ropa y los accesorios en el vestidor.</p>
       <label class="field"><span>Tu nombre</span><input id="wName" maxlength="20" placeholder="Por ejemplo, Lucía" autocomplete="nickname" enterkeyhint="done"></label>
       <div class="avatar-row" id="wAvatars" role="radiogroup" aria-label="Avatar"></div>
       <p class="gift"><svg><use href="#i-coin"/></svg>Te regalamos 50 monedas, 5 pistas y 1 vida extra.</p>
@@ -354,13 +376,15 @@
     </form>
   </dialog>
 
-  <dialog class="sheet" id="avatarDialog">
+  <dialog class="sheet" id="previewDialog">
     <div class="sheet-body">
-      <h3 class="sheet-title">Elige tu avatar</h3>
-      <p class="sheet-sub">Los que tienen precio se compran con monedas.</p>
-      <div class="avatar-grid" id="avatarGrid"></div>
+      <h3 class="sheet-title" id="pvTitle">Tablero</h3>
+      <p class="sheet-sub" id="pvDesc"></p>
+      <div class="pv" id="pvStage"></div>
+      <p class="pv-note" id="pvNote"></p>
       <div class="sheet-actions">
-        <button class="btn-quiet" data-close>Listo</button>
+        <button class="btn-primary" id="pvBuy">Comprar</button>
+        <button class="btn-quiet" data-close>Cerrar</button>
       </div>
     </div>
   </dialog>

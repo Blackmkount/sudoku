@@ -11,41 +11,53 @@ export const PALETTES = {
   jade: P({ scheme: 'light', bg: '#E9F2EE', surface: '#FFFFFF', ink: '#0F3D31', inkSoft: '#557A6F', accent: '#137556', accentStrong: '#0E5E45', onAccent: '#FFFFFF', line: '#CBE0D7', box: '#137556', peer: '#E1EFE8', same: '#C3E2D4', sel: '#9AD1BA', error: '#C23B22', errorBg: '#FBE6E1', gold: '#B8892B', hair: 'rgba(15,61,49,.12)', shade: '15,61,49' }),
   terracota: P({ scheme: 'light', bg: '#F4EBE5', surface: '#FFFDFB', ink: '#4A2114', inkSoft: '#8A6255', accent: '#B0502C', accentStrong: '#924124', onAccent: '#FFFFFF', line: '#EAD5C9', box: '#B0502C', peer: '#F6E6DC', same: '#F0D0BF', sel: '#E6B196', error: '#B4232F', errorBg: '#FBE2E4', gold: '#A87A1F', hair: 'rgba(74,33,20,.12)', shade: '74,33,20' }),
   lavanda: P({ scheme: 'light', bg: '#EFEDF9', surface: '#FFFFFF', ink: '#2B1E5E', inkSoft: '#6E66A0', accent: '#5B45C9', accentStrong: '#4936A8', onAccent: '#FFFFFF', line: '#D9D4F0', box: '#5B45C9', peer: '#EAE6FA', same: '#D7CEF7', sel: '#B9A8F2', error: '#C23B22', errorBg: '#FBE6E1', gold: '#B8892B', hair: 'rgba(43,30,94,.12)', shade: '43,30,94' }),
-  sevilla: P({ scheme: 'light', bg: '#FBEFF3', surface: '#FFFFFF', ink: '#5A1531', inkSoft: '#97607A', accent: '#C2185B', accentStrong: '#A0124A', onAccent: '#FFFFFF', line: '#F1D2DE', box: '#C2185B', peer: '#FBE6EE', same: '#F6CEDD', sel: '#EFA8C1', error: '#C2410C', errorBg: '#FDE7DB', gold: '#B8892B', hair: 'rgba(90,21,49,.12)', shade: '90,21,49' }),
-  medianoche: P({ scheme: 'dark', bg: '#0B0E1A', surface: '#151A2C', ink: '#F3EBD9', inkSoft: '#A59D8A', accent: '#E2B04A', accentStrong: '#F0C66C', onAccent: '#1A1408', line: '#262C44', box: '#C99A3A', peer: '#1C2236', same: '#3A3220', sel: '#5A4A22', error: '#FF7A6B', errorBg: '#3A1E22', gold: '#E2B04A', hair: 'rgba(243,235,217,.1)', shade: '0,0,0' }),
+  sevilla: P({ scheme: 'light', bg: '#FBEFF3', surface: '#FFFFFF', ink: '#5A1531', inkSoft: '#97607A', accent: '#C2185B', accentStrong: '#A0124A', onAccent: '#FFFFFF', line: '#F1D2DE', box: '#C2185B', peer: '#FBE6EE', same: '#F6CEDD', sel: '#EFA8C1', error: '#C2410C', errorBg: '#FDE7DB', gold: '#B8892B', hair: 'rgba(90,21,49,.12)', shade: '90,21,49', orn: 'flower' }),
+  medianoche: P({ scheme: 'dark', bg: '#0B0E1A', surface: '#151A2C', ink: '#F3EBD9', inkSoft: '#A59D8A', accent: '#E2B04A', accentStrong: '#F0C66C', onAccent: '#1A1408', line: '#262C44', box: '#C99A3A', peer: '#1C2236', same: '#3A3220', sel: '#5A4A22', error: '#FF7A6B', errorBg: '#3A1E22', gold: '#E2B04A', hair: 'rgba(243,235,217,.1)', shade: '0,0,0', pattern: 'stars' }),
   grafito: P({ scheme: 'dark', bg: '#121417', surface: '#1B1E23', ink: '#ECEFF3', inkSoft: '#98A0AB', accent: '#4FD1A5', accentStrong: '#7BE0BE', onAccent: '#08261C', line: '#2A2F36', box: '#3FB68E', peer: '#20262C', same: '#1F3D33', sel: '#285446', error: '#FF7A6B', errorBg: '#3A1E22', gold: '#E3B95A', hair: 'rgba(236,239,243,.1)', shade: '0,0,0' }),
+  // Colección pastel: botones con texto oscuro y números del jugador en un tono más intenso para que se lean bien
+  algodon: P({ scheme: 'light', bg: '#FDEFF5', surface: '#FFFFFF', ink: '#6A2C55', inkSoft: '#A0779A', accent: '#F2A1C7', accentStrong: '#EA8DB9', onAccent: '#5A2048', text: '#C2417F', user: '#C2417F', line: '#F6D6E6', box: '#EBA6CA', peer: '#FCEAF3', same: '#F8D3E6', sel: '#F4BCD8', error: '#D9485F', errorBg: '#FDE3E7', gold: '#D29A3E', hair: 'rgba(106,44,85,.12)', shade: '106,44,85', pattern: 'hearts', orn: 'heart' }),
+  melocoton: P({ scheme: 'light', bg: '#FFF2EA', surface: '#FFFFFF', ink: '#6B3A2A', inkSoft: '#A57E6E', accent: '#F7B496', accentStrong: '#F2A07C', onAccent: '#5E2E1F', text: '#C25A33', user: '#C25A33', line: '#F8DCCD', box: '#F2AE8E', peer: '#FFECE1', same: '#FDD9C7', sel: '#F9C4A9', error: '#D64545', errorBg: '#FDE2E2', gold: '#C98E2F', hair: 'rgba(107,58,42,.12)', shade: '107,58,42', pattern: 'flowers', orn: 'flower' }),
+  menta: P({ scheme: 'light', bg: '#ECF8F3', surface: '#FFFFFF', ink: '#24564A', inkSoft: '#6E968B', accent: '#9EDDC5', accentStrong: '#86D3B6', onAccent: '#1D4A3F', text: '#2E8C6B', user: '#2E8C6B', line: '#CFEDE1', box: '#86D0B4', peer: '#E3F5EE', same: '#CBEDE0', sel: '#ACE1CC', error: '#D9485F', errorBg: '#FDE3E7', gold: '#BD9532', hair: 'rgba(36,86,74,.12)', shade: '36,86,74', pattern: 'sparkles' }),
+  lila: P({ scheme: 'light', bg: '#F4F0FD', surface: '#FFFFFF', ink: '#4A3B7A', inkSoft: '#8D82B5', accent: '#C7B8F3', accentStrong: '#B6A4EE', onAccent: '#3B2D6B', text: '#6E54C9', user: '#6E54C9', line: '#E3DBF8', box: '#B9A8EE', peer: '#EFEAFD', same: '#E0D7FA', sel: '#CDBFF6', error: '#D9485F', errorBg: '#FDE3E7', gold: '#BF9A3E', hair: 'rgba(74,59,122,.12)', shade: '74,59,122', pattern: 'stars' }),
+  cielo: P({ scheme: 'light', bg: '#EEF6FD', surface: '#FFFFFF', ink: '#2C4D6E', inkSoft: '#7896B3', accent: '#A9D2F5', accentStrong: '#93C4F0', onAccent: '#203F5E', text: '#3477B8', user: '#3477B8', line: '#D5E7F7', box: '#90C3EE', peer: '#E7F2FC', same: '#D2E7FA', sel: '#B8DAF6', error: '#D9485F', errorBg: '#FDE3E7', gold: '#C49A35', hair: 'rgba(44,77,110,.12)', shade: '44,77,110', pattern: 'clouds' }),
+  cerezo: P({ scheme: 'light', bg: '#FFF4F6', surface: '#FFFFFF', ink: '#5E2F3C', inkSoft: '#A47884', accent: '#F7B8C6', accentStrong: '#F2A2B4', onAccent: '#5A2433', text: '#C4506E', user: '#C4506E', line: '#F8DDE3', box: '#EFA6B7', peer: '#FFEDF1', same: '#FCDCE4', sel: '#F7C3CF', error: '#C0392B', errorBg: '#FCE4E1', gold: '#C9963B', hair: 'rgba(94,47,60,.12)', shade: '94,47,60', pattern: 'flowers', orn: 'flower' }),
+  limonada: P({ scheme: 'light', bg: '#FFFBEA', surface: '#FFFFFF', ink: '#5C4A1E', inkSoft: '#9C8A5E', accent: '#F6DD85', accentStrong: '#F0D168', onAccent: '#4D3D12', text: '#9A7A12', user: '#A07E10', line: '#F5E9BF', box: '#E9CC6E', peer: '#FFF6D6', same: '#FCEDB5', sel: '#F8E39C', error: '#D04848', errorBg: '#FDE3E3', gold: '#C08A1E', hair: 'rgba(92,74,30,.12)', shade: '92,74,30', pattern: 'dots', orn: 'flower' }),
+  unicornio: P({ scheme: 'light', bg: '#F8F2FF', surface: '#FFFFFF', ink: '#4B3A78', inkSoft: '#8F82B3', accent: '#F4B3D3', accentStrong: '#EE9EC6', onAccent: '#4A2246', text: '#B5488A', user: '#7A5CD6', line: '#E8DDF8', box: '#B9A2E8', peer: '#F1EAFD', same: '#D7F2E6', sel: '#F8CDE2', error: '#D9485F', errorBg: '#FDE3E7', gold: '#D3A43F', hair: 'rgba(75,58,120,.12)', shade: '75,58,120', pattern: 'stars', orn: 'heart' }),
 };
 
 export const THEMES = [
-  { id: 'auto', name: 'Automático', desc: 'Porcelana de día y Cobalto de noche, según tu iPhone', price: 0, preview: ['light', 'dark'] },
-  { id: 'light', name: 'Porcelana', desc: 'Azul cobalto sobre blanco', price: 0 },
-  { id: 'dark', name: 'Cobalto', desc: 'Noche azul profunda', price: 0 },
-  { id: 'jade', name: 'Jade', desc: 'Verde celadón, sereno', price: 250 },
-  { id: 'terracota', name: 'Terracota', desc: 'Barro cocido y arcilla', price: 250 },
-  { id: 'lavanda', name: 'Lavanda', desc: 'Violeta suave', price: 250 },
-  { id: 'sevilla', name: 'Sevilla', desc: 'Rosa intenso de azulejo andaluz', price: 300 },
-  { id: 'medianoche', name: 'Medianoche', desc: 'Oscuro con detalles dorados', price: 400 },
-  { id: 'grafito', name: 'Grafito', desc: 'Gris carbón y verde menta', price: 400 },
+  { id: 'auto', group: 'Clásicos', name: 'Automático', desc: 'Porcelana de día y Cobalto de noche, según tu iPhone', price: 0 },
+  { id: 'light', group: 'Clásicos', name: 'Porcelana', desc: 'Azul cobalto sobre blanco', price: 0 },
+  { id: 'dark', group: 'Clásicos', name: 'Cobalto', desc: 'Noche azul profunda', price: 0 },
+  { id: 'jade', group: 'Clásicos', name: 'Jade', desc: 'Verde celadón, sereno', price: 900 },
+  { id: 'terracota', group: 'Clásicos', name: 'Terracota', desc: 'Barro cocido y arcilla', price: 900 },
+  { id: 'lavanda', group: 'Clásicos', name: 'Lavanda', desc: 'Violeta intenso', price: 900 },
+  { id: 'sevilla', group: 'Clásicos', name: 'Sevilla', desc: 'Rosa de azulejo andaluz, con flores', price: 1100 },
+  { id: 'medianoche', group: 'Clásicos', name: 'Medianoche', desc: 'Oscuro con dorado y estrellas', price: 1500 },
+  { id: 'grafito', group: 'Clásicos', name: 'Grafito', desc: 'Gris carbón y verde menta', price: 1500 },
+  { id: 'algodon', group: 'Pastel', name: 'Algodón de azúcar', desc: 'Rosa chicle con corazones', price: 1200 },
+  { id: 'melocoton', group: 'Pastel', name: 'Melocotón', desc: 'Durazno suave con flores', price: 1200 },
+  { id: 'menta', group: 'Pastel', name: 'Menta', desc: 'Verde agua con destellos', price: 1200 },
+  { id: 'lila', group: 'Pastel', name: 'Lila', desc: 'Violeta suave con estrellas', price: 1200 },
+  { id: 'cielo', group: 'Pastel', name: 'Cielo', desc: 'Azul bebé con nubes', price: 1200 },
+  { id: 'limonada', group: 'Pastel', name: 'Limonada', desc: 'Amarillo suave con lunares', price: 1300 },
+  { id: 'cerezo', group: 'Pastel', name: 'Flor de cerezo', desc: 'Rosa sakura con flores', price: 1500 },
+  { id: 'unicornio', group: 'Pastel', name: 'Unicornio', desc: 'Rosa, lila y menta con corazones', price: 2200 },
 ];
-
-export const AVATARS = [
-  ...['🦉', '🐢', '🦊', '🐙', '🐼', '🐧'].map((e) => ({ id: e, price: 0 })),
-  ...['🦄', '🐉', '🦁', '🐯', '🦋', '🐳', '🦚', '🦩'].map((e) => ({ id: e, price: 80 })),
-  ...['👑', '💎', '🔥', '🌙'].map((e) => ({ id: e, price: 200 })),
-];
-export const FREE_AVATARS = AVATARS.filter((a) => !a.price).map((a) => a.id);
 
 export const EFFECTS = [
   { id: 'glaze', name: 'Esmalte', desc: 'Una ola de color recorre el tablero', price: 0 },
-  { id: 'confetti', name: 'Confeti de azulejos', desc: 'Lluvia de piezas de colores al resolver', price: 180 },
-  { id: 'stars', name: 'Lluvia de estrellas', desc: 'Estrellas doradas desde lo alto', price: 220 },
+  { id: 'confetti', name: 'Confeti de azulejos', desc: 'Lluvia de piezas de colores al resolver', price: 900 },
+  { id: 'stars', name: 'Lluvia de estrellas', desc: 'Estrellas doradas desde lo alto', price: 1100 },
+  { id: 'hearts', name: 'Corazones', desc: 'Corazones rosas que flotan al ganar', price: 1200 },
+  { id: 'petals', name: 'Pétalos de cerezo', desc: 'Pétalos que caen despacio', price: 1400 },
 ];
 
 export const CONSUMABLES = [
-  { id: 'hint3', kind: 'hints', qty: 3, name: '3 pistas', desc: 'Señalan la próxima jugada y explican la técnica', price: 45 },
-  { id: 'hint10', kind: 'hints', qty: 10, name: '10 pistas', desc: 'El paquete grande, con descuento', price: 120 },
-  { id: 'life1', kind: 'lives', qty: 1, name: '1 vida extra', desc: 'Sigue jugando tras el tercer error', price: 40 },
-  { id: 'life3', kind: 'lives', qty: 3, name: '3 vidas extra', desc: 'Para los Diabólicos con límite de errores', price: 100 },
+  { id: 'hint3', kind: 'hints', qty: 3, name: '3 pistas', desc: 'Señalan la próxima jugada y explican la técnica', price: 90 },
+  { id: 'hint10', kind: 'hints', qty: 10, name: '10 pistas', desc: 'El paquete grande, con descuento', price: 250 },
+  { id: 'life1', kind: 'lives', qty: 1, name: '1 vida extra', desc: 'Sigue jugando tras el tercer error', price: 80 },
+  { id: 'life3', kind: 'lives', qty: 3, name: '3 vidas extra', desc: 'Para los Diabólicos con límite de errores', price: 200 },
 ];
 
 // Regalo de bienvenida (se cuenta una sola vez aunque se sincronice)
@@ -73,7 +85,7 @@ export const ACHIEVEMENTS = [
   { id: 'streak3', name: 'Tres días seguidos', desc: 'Racha de 3 desafíos diarios', coins: 60, test: (x) => x.streak >= 3 },
   { id: 'streak7', name: 'Semana completa', desc: 'Racha de 7 desafíos diarios', coins: 200, test: (x) => x.streak >= 7 },
   { id: 'fast', name: 'Relámpago', desc: 'Resuelve un Difícil en menos de 6 minutos', coins: 60, test: (x) => x.fastDificil },
-  { id: 'shopper', name: 'Coleccionista', desc: 'Compra un tema, avatar o efecto', coins: 30, test: (x) => x.cosmetics >= 1 },
+  { id: 'shopper', name: 'Coleccionista', desc: 'Compra un tema, una prenda o un efecto', coins: 30, test: (x) => x.cosmetics >= 1 },
 ];
 
 // Guía de técnicas (de menor a mayor dificultad)

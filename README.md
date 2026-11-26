@@ -31,9 +31,12 @@ Además:
 ## Perfil, monedas y tienda
 
 - **Perfil:** nombre y avatar. Sin cuenta se guarda en el teléfono; con cuenta, en la nube.
+- **Avatar y vestidor:** el avatar es una persona ilustrada. Al empezar eliges uno de 6 looks gratis; luego, en el vestidor (toca tu avatar en el perfil, o **Tienda → Avatar**), cambias tono de piel, peinado, color de pelo, ropa, gafas, gorros y coronas, pendientes, collares, barba y fondo. Todo lo que no tienes se puede probar antes de comprarlo.
 - **Estrellas:** 3 sin pistas ni errores, 2 sin pistas, 1 con pistas. Se ven en vivo durante la partida.
 - **Monedas:** cada nivel da monedas según su categoría (Difícil 20, Experto 30, Maestro 45, Diabólico 80) y se duplican con tres estrellas. El desafío del día da 60 más un extra por racha y una pista de regalo. Al empezar recibes 50 monedas, 5 pistas y 1 vida extra.
-- **Tienda:** pistas, vidas extra (para seguir tras el tercer error), 6 temas de color, 12 avatares y 2 efectos de victoria.
+- **Tienda:** pistas, vidas extra (para seguir tras el tercer error), ropa y accesorios para el avatar, 17 temas de tablero (3 gratis) y 4 efectos de victoria (confeti, estrellas, corazones y pétalos).
+- **Temas:** 9 clásicos (claro, oscuro y automático son gratis) y una colección pastel de 8 (Algodón de azúcar, Melocotón, Menta, Lila, Cielo, Cerezo, Limonada y Unicornio), con fondos de corazones, flores o estrellas. El botón **Ver cómo queda** muestra un tablero de ejemplo con el tema antes de comprarlo.
+- **Precios:** los temas cuestan entre 900 y 2200 monedas, las prendas entre 400 y 4000 (la corona real es lo más caro) y los efectos entre 900 y 1400. Un nivel Difícil con tres estrellas da 40 monedas, así que cada compra lleva su tiempo.
 - **Logros:** 15 logros con premio en monedas.
 - **Ranking:** cada nivel suma puntos según su categoría y tus estrellas (requiere cuenta).
 
@@ -58,6 +61,8 @@ El juego funciona sin esto, pero las cuentas, la sincronización entre dispositi
 4. Opcional, pero recomendable: en **Authentication → Sign In / Providers → Email**, desactiva **Confirm email**. Así la cuenta funciona al instante, sin esperar el correo. El correo integrado de Supabase solo envía unos pocos mensajes por hora.
 5. En **Project Settings → API** (o **API Keys**), copia la **Project URL** y la clave pública (**anon** o **publishable**) en [`js/config.js`](js/config.js).
 
+Si ya tenías el proyecto creado, la segunda migración (`avatar_ilustrado`) permite guardar el nuevo formato de avatar en el ranking. Con la integración de GitHub se aplica sola; si no, pégala también en el **SQL Editor**. Los jugadores que habían comprado avatares de emoji recuperan sus monedas al actualizar.
+
 Las dos claves de `config.js` son públicas por diseño: la seguridad la ponen las reglas de la migración. Nunca pongas ahí la clave **service_role** ni la **secret**.
 
 **Cómo se guarda:** cada dispositivo guarda en local y sube los cambios a la nube. Antes de subir, siempre trae lo que haya en la nube y lo combina. Monedas, pistas y vidas se cuentan por dispositivo, así que al combinar nada se duplica ni se pierde. El progreso se une quedándose con el mejor tiempo y las mejores estrellas de cada nivel.
@@ -80,6 +85,7 @@ js/levels.js               Banco de niveles generado
 js/app.js                  Lógica del juego e interfaz
 js/store.js                Estado del jugador, migraciones y combinación entre dispositivos
 js/catalog.js              Tienda, temas, logros y recompensas
+js/avatar.js               Avatares ilustrados (SVG por capas) y catálogo del vestidor
 js/cloud.js                Cliente de Supabase (cuentas, guardado y ranking)
 js/config.js               Claves del proyecto de Supabase
 js/fx.js                   Sonido, vibración y efectos de victoria
@@ -87,6 +93,7 @@ supabase/migrations/       Tablas y reglas de seguridad (migración)
 sw.js                      Caché para jugar sin conexión
 tools/generate-levels.mjs  Generador del banco de niveles
 tools/mock-supabase.py     Supabase simulado para pruebas
+tools/avatar-sheet.html    Hoja de muestra con todas las piezas de avatar
 ```
 
 ## Regenerar los niveles

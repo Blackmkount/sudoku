@@ -2,8 +2,9 @@ import * as M from './engine.js';
 import { TIERS } from './levels.js';
 import * as cloud from './cloud.js';
 import * as fx from './fx.js';
+import * as AV from './avatar.js';
 import {
-  PALETTES, THEMES, AVATARS, FREE_AVATARS, EFFECTS, CONSUMABLES, REWARD, POINTS, STAR_MULT, DAILY, ACHIEVEMENTS, TECH_GUIDE,
+  PALETTES, THEMES, EFFECTS, CONSUMABLES, REWARD, POINTS, STAR_MULT, DAILY, ACHIEVEMENTS, TECH_GUIDE,
 } from './catalog.js';
 import {
   GUEST_KEY, accountKey, defaults, migrate, mergeStates, forCloud, readState, writeState, removeState, writerFor,
@@ -135,7 +136,7 @@ function applyRemote(remote) {
 function playerCard() {
   return {
     name: (S.profile.name || 'Jugador').slice(0, 24),
-    avatar: S.profile.avatar || '🦉',
+    avatar: AV.isCode(S.profile.avatar) ? S.profile.avatar : AV.DEFAULT_CODE,
     points: myPoints(),
     levels: summary(S, TIERS, 0).levels,
   };
@@ -219,19 +220,46 @@ function paletteOf(id) {
   if (id === 'auto') return darkMQ.matches ? PALETTES.dark : PALETTES.light;
   return PALETTES[id] || PALETTES.light;
 }
+// Dibujos suaves de fondo para los temas que los tienen
+const flowerPath = (x, y, r, c) => [0, 72, 144, 216, 288].map((a) => `<circle cx="${(x + r * Math.cos((a * Math.PI) / 180)).toFixed(1)}" cy="${(y + r * Math.sin((a * Math.PI) / 180)).toFixed(1)}" r="${r * 0.9}" fill="${c}"/>`).join('');
+const heartPath = (x, y, k, c) => `<path transform="translate(${x} ${y}) scale(${k})" d="M0 7C-7 1-12-2-12-8a6 6 0 0 1 12-2a6 6 0 0 1 12 2C12-2 7 1 0 7z" fill="${c}"/>`;
+const starPath = (x, y, r, c) => `<path d="M${x} ${y - r}L${x + r * 0.3} ${y - r * 0.3}L${x + r} ${y}L${x + r * 0.3} ${y + r * 0.3}L${x} ${y + r}L${x - r * 0.3} ${y + r * 0.3}L${x - r} ${y}L${x - r * 0.3} ${y - r * 0.3}Z" fill="${c}"/>`;
+const PATTERNS = {
+  hearts: (c) => heartPath(18, 18, 0.9, c) + heartPath(50, 50, 0.55, c),
+  flowers: (c) => flowerPath(18, 18, 4.5, c) + flowerPath(50, 48, 3, c),
+  stars: (c) => starPath(18, 18, 7, c) + starPath(50, 48, 4.5, c) + `<circle cx="46" cy="16" r="1.6" fill="${c}"/>`,
+  sparkles: (c) => starPath(18, 20, 6, c) + starPath(48, 46, 4, c),
+  clouds: (c) => `<g fill="${c}"><circle cx="14" cy="20" r="6"/><circle cx="22" cy="16" r="8"/><circle cx="30" cy="20" r="6"/><rect x="10" y="20" width="24" height="6" rx="3"/></g><g fill="${c}" transform="translate(30 32) scale(.6)"><circle cx="14" cy="20" r="6"/><circle cx="22" cy="16" r="8"/><circle cx="30" cy="20" r="6"/><rect x="10" y="20" width="24" height="6" rx="3"/></g>`,
+  dots: (c) => `<circle cx="16" cy="16" r="4" fill="${c}"/><circle cx="48" cy="48" r="4" fill="${c}"/>`,
+};
+function patternURL(p) {
+  if (!p.pattern || !PATTERNS[p.pattern]) return 'none';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><g opacity="${p.scheme === 'dark' ? '.22' : '.2'}">${PATTERNS[p.pattern](p.box)}</g></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+const ornOf = (p) => `#i-${p.orn || 'star'}`;
+// Variables CSS de una paleta (para aplicar el tema o mostrar una vista previa)
+function themeVars(p) {
+  return {
+    '--bg': p.bg, '--surface': p.surface, '--ink': p.ink, '--ink-soft': p.inkSoft,
+    '--cobalt': p.accent, '--cobalt-strong': p.accentStrong, '--on-cobalt': p.onAccent,
+    '--cobalt-text': p.text || p.accent, '--user': p.user || p.accent,
+    '--line': p.line, '--box': p.box, '--peer': p.peer, '--same': p.same, '--sel': p.sel,
+    '--error': p.error, '--error-bg': p.errorBg, '--gold': p.gold, '--hair': p.hair,
+    '--shadow': p.scheme === 'dark'
+      ? '0 1px 0 rgba(0,0,0,.2), 0 16px 40px -20px rgba(0,0,0,.8)'
+      : `0 1px 0 rgba(${p.shade},.06), 0 12px 32px -18px rgba(${p.shade},.45)`,
+    '--pattern': patternURL(p),
+    'color-scheme': p.scheme,
+  };
+}
+const styleOf = (vars) => Object.entries(vars).map(([k, v]) => `${k}:${String(v).replace(/"/g, "'")}`).join(';');
 function applyTheme() {
   const p = paletteOf(S.equipped.theme);
   const r = document.documentElement.style;
-  const set = (k, v) => r.setProperty(k, v);
-  set('--bg', p.bg); set('--surface', p.surface); set('--ink', p.ink); set('--ink-soft', p.inkSoft);
-  set('--cobalt', p.accent); set('--cobalt-strong', p.accentStrong); set('--on-cobalt', p.onAccent);
-  set('--line', p.line); set('--box', p.box); set('--peer', p.peer); set('--same', p.same); set('--sel', p.sel);
-  set('--error', p.error); set('--error-bg', p.errorBg); set('--gold', p.gold); set('--hair', p.hair);
-  set('--shadow', p.scheme === 'dark'
-    ? '0 1px 0 rgba(0,0,0,.2), 0 16px 40px -20px rgba(0,0,0,.8)'
-    : `0 1px 0 rgba(${p.shade},.06), 0 12px 32px -18px rgba(${p.shade},.45)`);
-  set('color-scheme', p.scheme);
+  for (const [k, v] of Object.entries(themeVars(p))) r.setProperty(k, v);
   document.documentElement.dataset.scheme = p.scheme;
+  document.querySelectorAll('.ornaments use').forEach((u) => u.setAttribute('href', ornOf(p)));
   $('themeColor').setAttribute('content', p.bg);
 }
 darkMQ.addEventListener?.('change', () => { if (S.equipped.theme === 'auto') applyTheme(); });
@@ -251,11 +279,13 @@ function show(id) {
   if (id === 'profile') renderProfile();
   if (id === 'shop') renderShop();
   if (id === 'techniques') renderTechniques();
+  if (id === 'wardrobe') renderWardrobe();
 }
 function refreshScreen() {
   if (screen === 'home') renderHome();
   else if (screen === 'profile') renderProfile();
   else if (screen === 'shop') renderShop();
+  else if (screen === 'wardrobe') renderWardrobe();
   else if (screen === 'game') render();
   renderTopbar();
 }
@@ -287,7 +317,7 @@ function gameLabel(g) {
   return `Nivel ${g.index + 1} de ${tierById[g.tier].levels.length}`;
 }
 function renderTopbar() {
-  $('meAvatar').textContent = S.profile.avatar || '🦉';
+  $('meAvatar').innerHTML = AV.any(S.profile.avatar, { title: 'Tu avatar' });
   $('meName').textContent = S.profile.name || 'Invitado';
   const u = cloud.user();
   $('meState').textContent = u && ctxKey !== GUEST_KEY
@@ -510,7 +540,7 @@ function buildBoard() {
   let orn = '';
   for (let x = 1; x < n / E.BC; x++) {
     for (let y = 1; y < n / E.BR; y++) {
-      orn += `<svg style="left:${(x * E.BC * 100) / n}%;top:${(y * E.BR * 100) / n}%"><use href="#i-star"/></svg>`;
+      orn += `<svg style="left:${(x * E.BC * 100) / n}%;top:${(y * E.BR * 100) / n}%"><use href="${ornOf(paletteOf(S.equipped.theme))}"/></svg>`;
     }
   }
   document.querySelector('.ornaments').innerHTML = orn;
@@ -1056,7 +1086,7 @@ document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click
 function swatch(id) {
   const ps = id === 'auto' ? [PALETTES.light, PALETTES.dark] : [PALETTES[id]];
   return `<span class="swatch${ps.length > 1 ? ' duo' : ''}">${ps.map((p) => `<span style="background:${p.bg}">
-    <i style="background:${p.surface};border-color:${p.box}"><b style="color:${p.ink}">7</b><b style="color:${p.accent}">3</b><em style="background:${p.sel}"></em></i></span>`).join('')}</span>`;
+    <i style="background:${p.surface};border-color:${p.box}"><b style="color:${p.ink}">7</b><b style="color:${p.user || p.accent}">3</b><em style="background:${p.sel}"></em></i></span>`).join('')}</span>`;
 }
 function priceBtn(type, item, extra = '') {
   const cost = item.price;
@@ -1080,23 +1110,27 @@ function renderShop() {
     }
     html += '<p class="shop-foot">El desafío del día te regala una pista cada vez que lo resuelves.</p>';
   } else if (shopTab === 'themes') {
+    let group = '';
     for (const t of THEMES) {
+      if (t.group !== group) {
+        group = t.group;
+        html += `<h3 class="shop-group">${group === 'Pastel' ? 'Colección pastel' : 'Clásicos'}</h3>`;
+      }
       const own = owns('theme', t), on = S.equipped.theme === t.id;
       html += `<div class="item theme">
-        ${swatch(t.id)}
-        <span class="item-text"><b>${t.name}</b><small>${t.desc}</small></span>
+        <button class="swatch-btn" data-preview="${t.id}" aria-label="Ver ${t.name}">${swatch(t.id)}</button>
+        <span class="item-text"><b>${t.name}</b><small>${t.desc}</small><button class="see" data-preview="${t.id}">Ver cómo queda</button></span>
         ${own ? `<button class="use ${on ? 'on' : ''}" data-use="theme:${t.id}" ${on ? 'disabled' : ''}>${on ? 'En uso' : 'Usar'}</button>` : priceBtn('theme', t)}
       </div>`;
     }
   } else if (shopTab === 'avatars') {
-    html += '<div class="avatar-grid shop-avatars">';
-    for (const a of AVATARS) {
-      const own = owns('avatar', a), on = S.profile.avatar === a.id;
-      html += `<button class="av ${on ? 'on' : ''} ${own ? 'own' : ''}" data-${own ? 'use' : 'buy'}="avatar:${a.id}" aria-label="Avatar ${a.id}${own ? '' : `, ${a.price} monedas`}">
-        <span>${a.id}</span>${own ? (on ? '<small>En uso</small>' : '<small>Usar</small>') : `<small class="p">${coinSvg}${a.price}</small>`}
-      </button>`;
-    }
-    html += '</div>';
+    const owned = Object.keys(S.owned).filter((k) => k.startsWith('av:')).length;
+    html += `<div class="wd-cta">
+      <div class="wd-cta-av">${AV.svg(S.profile.avatar)}</div>
+      <b>Tu avatar</b>
+      <small>Pruébate peinados, ropa, gafas, sombreros y joyas antes de comprarlos. ${owned ? `Tienes ${owned} ${owned === 1 ? 'prenda comprada' : 'prendas compradas'}.` : ''}</small>
+      <button class="btn-primary" data-wardrobe="1">Abrir el vestidor</button>
+    </div>`;
   } else {
     for (const f of EFFECTS) {
       const own = owns('effect', f), on = S.equipped.effect === f.id;
@@ -1118,37 +1152,38 @@ $('shopList').addEventListener('click', (e) => {
     else fx.celebrate(b.dataset.try, [p.accent, p.gold, p.box, p.sel, '#E7B53C']);
     return;
   }
+  if (b.dataset.preview) { openThemePreview(b.dataset.preview); return; }
+  if (b.dataset.wardrobe) { openWardrobe('shop'); return; }
   if (b.dataset.use) { const [type, id] = b.dataset.use.split(':'); equip(type, id); return; }
   if (b.dataset.buy) {
     const [type, id] = b.dataset.buy.split(/:(.+)/);
     const item = type === 'item' ? CONSUMABLES.find((c) => c.id === id)
-      : type === 'theme' ? THEMES.find((t) => t.id === id)
-        : type === 'avatar' ? AVATARS.find((a) => a.id === id) : EFFECTS.find((f) => f.id === id);
+      : type === 'theme' ? THEMES.find((t) => t.id === id) : EFFECTS.find((f) => f.id === id);
     if (item) buyFlow(type, item);
   }
 });
 function equip(type, id) {
   if (type === 'theme') { S.equipped.theme = id; applyTheme(); }
   if (type === 'effect') S.equipped.effect = id;
-  if (type === 'avatar') S.profile.avatar = id;
   fx.haptic();
   persist();
   refreshScreen();
 }
 async function buyFlow(type, item) {
-  const name = type === 'avatar' ? `el avatar ${item.id}` : type === 'theme' ? `el tema ${item.name}` : type === 'effect' ? `el efecto ${item.name}` : item.name;
+  const name = type === 'theme' ? `el tema ${item.name}` : type === 'effect' ? `el efecto ${item.name}` : item.name;
   if (coins(S) < item.price) {
     toast(`Te faltan ${nf.format(item.price - coins(S))} monedas. Resuelve niveles para ganarlas.`);
     fx.haptic('error');
-    return;
+    return false;
   }
   const ok = await confirmBox({
     title: `¿Comprar ${name}?`,
     text: `Cuesta ${nf.format(item.price)} monedas. Te quedarán ${nf.format(coins(S) - item.price)}.`,
     yes: 'Comprar', no: 'Cancelar',
   });
-  if (!ok) return;
+  if (!ok) return false;
   purchase(item, { type });
+  return true;
 }
 function purchase(item, { type = 'item', silent = false } = {}) {
   addC(S.wallet.spent, W, item.price);
@@ -1168,10 +1203,190 @@ function purchase(item, { type = 'item', silent = false } = {}) {
   if (screen === 'game') render();
 }
 
+// ── Vista previa de un tablero ─────────────────────────────
+// Un tablero de ejemplo, con números tuyos, notas, selección y un error, pintado con el tema elegido
+function previewBoard(p, size) {
+  const T = M.getEngine(9);
+  const L = TIERS[0].levels[3];
+  const puzzle = L.slice(0, 81), sol = M.fromStr(L.slice(81, 162));
+  const vals = M.fromStr(puzzle);
+  const empties = vals.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
+  empties.slice(0, 14).forEach((i) => { vals[i] = sol[i]; });
+  const err = empties[16];
+  vals[err] = (sol[err] % 9) + 1;
+  const sel = empties[5], sv = vals[sel];
+  const cand = T.candidates(vals);
+  const noted = new Set(empties.slice(18, 30));
+  let cells = '';
+  for (let b = 0; b < 9; b++) {
+    cells += '<div class="box">';
+    for (const i of T.UNITS[18 + b]) {
+      const given = puzzle[i] !== '.';
+      const v = vals[i];
+      let cls = 'cell';
+      if (given) cls += ' given'; else if (v) cls += ' user';
+      if (i === err) cls += ' err';
+      if (i === sel) cls += ' sel';
+      else if (T.ROW_OF[i] === T.ROW_OF[sel] || T.COL_OF[i] === T.COL_OF[sel] || T.BOX_OF[i] === T.BOX_OF[sel]) cls += ' peer';
+      if (v && v === sv && i !== sel) cls += ' same';
+      let notes = '';
+      if (!v && noted.has(i)) notes = `<div class="n">${Array.from({ length: 9 }, (_, d) => `<i class="${cand[i] & (1 << d) ? (d + 1 === sv ? 'on hl' : 'on') : ''}">${d + 1}</i>`).join('')}</div>`;
+      cells += `<div class="${cls}"><span class="v">${v || ''}</span>${notes}</div>`;
+    }
+    cells += '</div>';
+  }
+  const orn = [[33.333, 33.333], [66.666, 33.333], [33.333, 66.666], [66.666, 66.666]].map(([x, y]) => `<svg style="left:${x}%;top:${y}%"><use href="${ornOf(p)}"/></svg>`).join('');
+  const keys = Array.from({ length: 9 }, (_, d) => `<span class="key">${d + 1}</span>`).join('');
+  return `<div class="pv-stage" style="${styleOf(themeVars(p))};--board:${size}px;--n:9">
+    <div class="pv-bar"><span class="pv-title">Difícil<small>Nivel 4 de 50</small></span><span class="timer"><span>3:41</span></span></div>
+    <div class="pv-status"><span>Errores <b>1</b></span><span class="live-stars">${starsHTML(2)}</span></div>
+    <div class="board-wrap"><div class="board">${cells}</div><div class="ornaments">${orn}</div></div>
+    <div class="pad pv-pad">${keys}</div>
+  </div>`;
+}
+let previewId = null;
+function openThemePreview(id) {
+  const t = THEMES.find((x) => x.id === id);
+  if (!t) return;
+  previewId = id;
+  const size = Math.min(window.innerWidth - 76, 330);
+  const ps = id === 'auto' ? [PALETTES.light, PALETTES.dark] : [PALETTES[id]];
+  $('pvTitle').textContent = t.name;
+  $('pvDesc').textContent = id === 'auto' ? 'Así se ve de día y de noche.' : t.desc;
+  $('pvStage').innerHTML = ps.map((p) => previewBoard(p, ps.length > 1 ? Math.floor(size * 0.78) : size)).join('');
+  renderPreviewActions();
+  $('previewDialog').showModal();
+}
+function renderPreviewActions() {
+  const t = THEMES.find((x) => x.id === previewId);
+  const own = owns('theme', t), on = S.equipped.theme === t.id;
+  const btn = $('pvBuy');
+  btn.disabled = false;
+  if (own) {
+    btn.innerHTML = on ? 'Ya lo estás usando' : 'Usar este tablero';
+    btn.disabled = on;
+    $('pvNote').textContent = '';
+  } else {
+    btn.innerHTML = `Comprar por ${coinSvg}${nf.format(t.price)}`;
+    const short = t.price - coins(S);
+    $('pvNote').textContent = short > 0 ? `Te faltan ${nf.format(short)} monedas. Tienes ${nf.format(coins(S))}.` : `Tienes ${nf.format(coins(S))} monedas.`;
+  }
+}
+$('pvBuy').addEventListener('click', async () => {
+  const t = THEMES.find((x) => x.id === previewId);
+  if (owns('theme', t)) { equip('theme', t.id); $('previewDialog').close(); toast(`Tablero ${t.name} en uso.`); return; }
+  if (await buyFlow('theme', t)) $('previewDialog').close();
+  else renderPreviewActions();
+});
+
+// ── Vestidor: avatar con ropa y accesorios ─────────────────
+const wd = { slot: 'h', trying: null, back: 'profile' };
+const ownsPiece = (k, i) => !AV.slot(k).items[i].price || !!S.owned[`av:${k}:${i}`];
+const savedLook = () => AV.parse(S.profile.avatar);
+function draftLook() {
+  const o = savedLook();
+  if (wd.trying) o[wd.trying.k] = wd.trying.i;
+  return o;
+}
+function openWardrobe(from = screen) {
+  wd.trying = null;
+  wd.back = from;
+  show('wardrobe');
+}
+function renderWardrobe() {
+  renderTopbar();
+  $('wdCoins').textContent = nf.format(coins(S));
+  const look = draftLook(), saved = savedLook();
+  $('wdAvatar').innerHTML = AV.svg(look, { view: '6 8 188 188' });
+  $('wdCats').innerHTML = AV.SLOTS.map((x) => `<button role="tab" data-slot="${x.key}" aria-selected="${x.key === wd.slot}">${x.name}</button>`).join('');
+  const sl = AV.slot(wd.slot);
+  $('wdGrid').innerHTML = sl.items.map((it, i) => {
+    const own = ownsPiece(wd.slot, i);
+    const on = saved[wd.slot] === i && !(wd.trying && wd.trying.k === wd.slot);
+    const trying = wd.trying && wd.trying.k === wd.slot && wd.trying.i === i;
+    const thumb = AV.svg({ ...look, [wd.slot]: i }, { view: sl.view, round: false });
+    const tag = on ? '<em class="wd-tag on">Puesto</em>' : own ? '' : `<em class="wd-tag">${coinSvg}${nf.format(it.price)}</em>`;
+    return `<button class="wd-item${on ? ' on' : ''}${trying ? ' trying' : ''}${own ? '' : ' locked'}" data-piece="${i}" aria-label="${it.name}${own ? '' : `, ${it.price} monedas`}">
+      <span class="wd-thumb">${thumb}</span><small>${it.name}</small>${tag}</button>`;
+  }).join('');
+  const bar = $('wdBuy');
+  if (wd.trying) {
+    const it = AV.slot(wd.trying.k).items[wd.trying.i];
+    $('wdItem').textContent = it.name;
+    const short = it.price - coins(S);
+    $('wdPrice').textContent = short > 0 ? `Te faltan ${nf.format(short)} monedas` : 'Probándotelo';
+    $('wdBuyBtn').innerHTML = `Comprar ${coinSvg}${nf.format(it.price)}`;
+    $('wdBuyBtn').classList.toggle('short', short > 0);
+    bar.hidden = false;
+    $('wdNote').textContent = 'Así te queda. Cómpralo para quedártelo.';
+  } else {
+    bar.hidden = true;
+    $('wdNote').textContent = 'Toca una prenda para probártela. Lo gratis se pone al momento.';
+  }
+}
+$('wdCats').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-slot]');
+  if (!b) return;
+  wd.slot = b.dataset.slot;
+  fx.haptic();
+  renderWardrobe();
+  b.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+});
+$('wdGrid').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-piece]');
+  if (!b) return;
+  const k = wd.slot, i = +b.dataset.piece;
+  if (ownsPiece(k, i)) {
+    const o = savedLook();
+    o[k] = i;
+    S.profile.avatar = AV.stringify(o);
+    if (wd.trying && wd.trying.k === k) wd.trying = null;
+    persist();
+    fx.sfx.tap();
+  } else {
+    wd.trying = { k, i };
+    fx.haptic();
+  }
+  renderWardrobe();
+});
+$('wdUndo').addEventListener('click', () => { wd.trying = null; renderWardrobe(); });
+$('wdBuyBtn').addEventListener('click', async () => {
+  if (!wd.trying) return;
+  const { k, i } = wd.trying;
+  const it = AV.slot(k).items[i];
+  if (coins(S) < it.price) {
+    toast(`Te faltan ${nf.format(it.price - coins(S))} monedas. Resuelve niveles para ganarlas.`);
+    fx.haptic('error');
+    return;
+  }
+  const ok = await confirmBox({
+    title: `¿Comprar ${it.name.toLowerCase()}?`,
+    text: `Cuesta ${nf.format(it.price)} monedas. Te quedarán ${nf.format(coins(S) - it.price)}.`,
+    yes: 'Comprar', no: 'Cancelar',
+  });
+  if (!ok) return;
+  addC(S.wallet.spent, W, it.price);
+  S.owned[`av:${k}:${i}`] = Date.now();
+  const o = savedLook();
+  o[k] = i;
+  S.profile.avatar = AV.stringify(o);
+  wd.trying = null;
+  const ach = unlockAchievements();
+  fx.sfx.buy();
+  fx.haptic('success');
+  persist();
+  renderWardrobe();
+  toast(ach.length ? `¡Es tuyo! Logro: ${ach[0].name} (+${ach[0].coins} monedas)` : '¡Es tuyo! Ya lo llevas puesto.');
+});
+$('wdBack').addEventListener('click', () => {
+  wd.trying = null;
+  if (wd.back === 'shop') openShop('avatars', 'home'); else show(wd.back === 'home' ? 'home' : 'profile');
+});
+
 // ── Perfil y cuenta ────────────────────────────────────────
 function renderProfile() {
   renderTopbar();
-  $('pAvatar').textContent = S.profile.avatar || '🦉';
+  $('pAvatar').innerHTML = AV.any(S.profile.avatar, { title: 'Tu avatar' });
   if (document.activeElement !== $('pName')) $('pName').value = S.profile.name || '';
   const u = cloud.user();
   const box = $('accountBox');
@@ -1215,25 +1430,7 @@ $('pName').addEventListener('change', () => {
   toast('Nombre guardado.');
 });
 $('pName').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('pName').blur(); });
-$('pAvatar').addEventListener('click', openAvatarPicker);
-
-function openAvatarPicker() {
-  const grid = $('avatarGrid');
-  grid.innerHTML = AVATARS.map((a) => {
-    const own = owns('avatar', a), on = S.profile.avatar === a.id;
-    return `<button class="av ${on ? 'on' : ''} ${own ? 'own' : ''}" data-av="${a.id}" aria-label="Avatar ${a.id}${own ? '' : `, ${a.price} monedas`}">
-      <span>${a.id}</span>${own ? '' : `<small class="p">${coinSvg}${a.price}</small>`}</button>`;
-  }).join('');
-  $('avatarDialog').showModal();
-}
-$('avatarGrid').addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-av]');
-  if (!b) return;
-  const a = AVATARS.find((x) => x.id === b.dataset.av);
-  if (owns('avatar', a)) { equip('avatar', a.id); $('avatarDialog').close(); return; }
-  $('avatarDialog').close();
-  await buyFlow('avatar', a);
-});
+$('pAvatar').addEventListener('click', () => openWardrobe('profile'));
 
 // Registro / inicio de sesión
 let authMode = 'signup';
@@ -1413,12 +1610,12 @@ $('passwordForm').addEventListener('submit', async (e) => {
 });
 
 // ── Bienvenida ─────────────────────────────────────────────
-let welcomeAvatar = FREE_AVATARS[0];
+let welcomeAvatar = AV.PRESETS[0];
 function openWelcome() {
   $('wName').value = S.profile.name || '';
-  welcomeAvatar = S.profile.avatar || FREE_AVATARS[0];
+  welcomeAvatar = AV.PRESETS.includes(S.profile.avatar) ? S.profile.avatar : AV.PRESETS[0];
   const row = $('wAvatars');
-  row.innerHTML = FREE_AVATARS.map((a) => `<button type="button" role="radio" class="av-pick" data-pick="${a}" aria-checked="${a === welcomeAvatar}">${a}</button>`).join('');
+  row.innerHTML = AV.PRESETS.map((a, k) => `<button type="button" role="radio" class="av-pick" data-pick="${a}" aria-checked="${a === welcomeAvatar}" aria-label="Avatar ${k + 1}">${AV.svg(a)}</button>`).join('');
   $('wLogin').hidden = !cloud.enabled();
   $('welcomeDialog').showModal();
 }
@@ -1462,7 +1659,7 @@ async function openRanking() {
     let html = '<ol class="rank-list">';
     rows.forEach((r, k) => {
       html += `<li class="${me && r.user_id === me.id ? 'me' : ''}"><span class="rk ${k < 3 ? `top${k + 1}` : ''}">${k + 1}</span>
-        <span class="avatar sm">${esc(r.avatar || '🦉')}</span>
+        <span class="avatar sm">${AV.any(r.avatar)}</span>
         <span class="rn"><b>${esc(r.display_name)}</b><small>${r.levels_done} ${r.levels_done === 1 ? 'nivel' : 'niveles'}</small></span>
         <span class="rp">${nf.format(r.points)}</span></li>`;
     });
@@ -1470,7 +1667,7 @@ async function openRanking() {
     if (!rows.length) html = '<div class="empty"><svg><use href="#i-trophy"/></svg><b>Aún no hay nadie</b><small>Resuelve un nivel con tu cuenta y serás el primero.</small></div>';
     if (me && !rows.some((r) => r.user_id === me.id)) {
       const rank = await cloud.rankOf(myPoints()).catch(() => null);
-      html += `<ol class="rank-list mine"><li class="me"><span class="rk">${rank || '—'}</span><span class="avatar sm">${esc(S.profile.avatar)}</span>
+      html += `<ol class="rank-list mine"><li class="me"><span class="rk">${rank || '—'}</span><span class="avatar sm">${AV.any(S.profile.avatar)}</span>
         <span class="rn"><b>${esc(S.profile.name)}</b><small>Tú</small></span><span class="rp">${nf.format(myPoints())}</span></li></ol>`;
     }
     if (!me) html += '<div class="rank-cta"><p>Crea una cuenta para aparecer en el ranking.</p><button class="btn-primary" id="rankSignup">Crear cuenta</button></div>';
@@ -1557,7 +1754,7 @@ function confirmBox({ title, text, yes = 'Sí', no = 'Cancelar' }) {
   });
 }
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
-for (const id of ['moreDialog', 'settingsDialog', 'statsDialog', 'quickDialog', 'pauseDialog', 'avatarDialog', 'authDialog', 'passwordDialog']) {
+for (const id of ['moreDialog', 'settingsDialog', 'statsDialog', 'quickDialog', 'pauseDialog', 'previewDialog', 'authDialog', 'passwordDialog']) {
   const dlg = $(id);
   dlg.addEventListener('click', (e) => {
     if (e.target !== dlg) return;

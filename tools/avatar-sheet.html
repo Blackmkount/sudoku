@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><style>body{font:12px sans-serif;background:#eee;margin:8px}.g{display:grid;grid-template-columns:repeat(6,120px);gap:8px}.g div{text-align:center}.g svg{width:120px;height:120px}</style>
+<div class="g" id="g"></div>
+<script type="module">
+import * as A from '../js/avatar.js';
+const g = document.getElementById('g');
+const add = (o, label) => { const d = document.createElement('div'); d.innerHTML = A.svg(o) + '<br>' + label; g.appendChild(d); };
+const mode = location.hash.slice(1) || 'hair';
+const base = A.parse(A.DEFAULT_CODE);
+if (mode === 'hair') A.slot('h').items.forEach((it, k) => add({ ...base, h: k, c: k % 10, k: k % 11, s: k % 6 }, it.name));
+if (mode === 'tops') A.slot('t').items.forEach((it, k) => add({ ...base, t: k, k: (k * 3) % 11, h: 1, s: (k + 2) % 6 }, it.name));
+if (mode === 'heads') A.slot('a').items.forEach((it, k) => add({ ...base, a: k, h: k % 4, g: k % 6, r: k % 5, n: k % 4 }, it.name));
+if (mode === 'faces') { A.slot('e').items.forEach((it, k) => add({ ...base, e: k, m: k % 5, f: k % 5, s: k }, it.name + ' / ' + A.slot('m').items[k%5].name)); A.slot('b').items.forEach((it,k)=>add({...base,b:k,h:(k+3)%12,c:(k+4)%10},it.name)); }
+if (mode === 'presets') A.PRESETS.forEach((c, k) => add(c, 'preset ' + k));
+</script>

@@ -86,12 +86,14 @@ export function celebrate(kind, colors) {
   try { cv.showPopover(); } catch (_) { /* navegadores antiguos: queda detrás */ }
   const g = cv.getContext('2d');
   g.scale(dpr, dpr);
-  const N = kind === 'stars' ? 70 : 120;
+  const N = kind === 'stars' ? 70 : kind === 'hearts' ? 60 : kind === 'petals' ? 80 : 120;
+  if (kind === 'hearts') colors = ['#FF8FB8', '#F25C94', '#FFB3CF', '#E8457E'];
+  if (kind === 'petals') colors = ['#FFC7D6', '#F9AFC4', '#FFDCE6', '#F7A1B8'];
   const parts = Array.from({ length: N }, () => ({
     x: Math.random() * W,
-    y: -20 - Math.random() * H * 0.6,
+    y: kind === 'hearts' ? H + 20 + Math.random() * H * 0.5 : -20 - Math.random() * H * 0.6,
     vx: (Math.random() - 0.5) * 1.6,
-    vy: 2 + Math.random() * 3.2,
+    vy: kind === 'petals' ? 0.8 + Math.random() * 1.4 : kind === 'hearts' ? -(1.2 + Math.random() * 2) : 2 + Math.random() * 3.2,
     r: Math.random() * Math.PI,
     vr: (Math.random() - 0.5) * 0.2,
     s: kind === 'stars' ? 8 + Math.random() * 10 : 6 + Math.random() * 7,
@@ -106,18 +108,29 @@ export function celebrate(kind, colors) {
     g.closePath();
     g.fill();
   };
+  const heart = (s) => {
+    g.beginPath();
+    g.moveTo(0, s * 0.35);
+    g.bezierCurveTo(-s * 0.9, -s * 0.25, -s * 0.45, -s * 0.95, 0, -s * 0.45);
+    g.bezierCurveTo(s * 0.45, -s * 0.95, s * 0.9, -s * 0.25, 0, s * 0.35);
+    g.fill();
+  };
   const t0 = performance.now();
   (function frame(t) {
     const life = (t - t0) / 1000;
     g.clearRect(0, 0, W, H);
     g.globalAlpha = Math.max(0, Math.min(1, 3.4 - life));
     for (const p of parts) {
-      p.x += p.vx; p.y += p.vy; p.r += p.vr; p.vy += 0.02;
+      p.x += p.vx + (kind === 'petals' ? Math.sin((p.y + p.s * 20) / 40) * 0.8 : 0);
+      p.y += p.vy; p.r += p.vr;
+      if (kind !== 'hearts' && kind !== 'petals') p.vy += 0.02;
       g.save();
       g.translate(p.x, p.y);
       g.rotate(p.r);
       g.fillStyle = p.c;
       if (kind === 'stars') star(0, 0, p.s / 2);
+      else if (kind === 'hearts') { g.rotate(-p.r * 0.3); heart(p.s * 1.3); }
+      else if (kind === 'petals') { g.beginPath(); g.ellipse(0, 0, p.s * 0.75, p.s * 0.42, 0, 0, Math.PI * 2); g.fill(); }
       else { g.fillRect(-p.s / 2, -p.s / 2, p.s, p.s); g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(-p.s / 6, -p.s / 6, p.s / 3, p.s / 3); }
       g.restore();
     }

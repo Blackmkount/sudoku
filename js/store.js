@@ -6,8 +6,9 @@
 //  · El progreso se une: mejor tiempo y más estrellas por nivel.
 // ─────────────────────────────────────────────────────────────
 import { WELCOME, REWARD } from './catalog.js';
+import { DEFAULT_CODE, PRESETS, isCode } from './avatar.js';
 
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 export const GUEST_KEY = 'azulejo.v1';
 export const accountKey = (uid) => `azulejo.u.${uid}`;
 
@@ -16,7 +17,7 @@ export const newId = (p = 'w') => p + Math.random().toString(36).slice(2, 10) + 
 export function defaults() {
   return {
     v: STATE_VERSION,
-    profile: { name: '', avatar: '🦉' },
+    profile: { name: '', avatar: DEFAULT_CODE },
     settings: { showErrors: true, errorLimit: false, sameHighlight: true, autoNotes: true, showTimer: true, sound: true, haptics: true },
     equipped: { theme: 'auto', effect: 'glaze' },
     owned: {},
@@ -72,6 +73,25 @@ export function migrate(raw) {
     s.wallet = { earned: { welcome: WELCOME.coins, legacy }, spent: {} };
     s.onboarded = false;
     if (hadProgress) s.meta = { updatedAt: Date.now() };
+    s.v = STATE_VERSION;
+  }
+  if (s.v < 4) {
+    // Versión 4: los avatares emoji pasan a ser personajes ilustrados.
+    // Se devuelven las monedas de los emoji comprados (la casilla fija evita duplicar al sincronizar).
+    const LEGACY = { '🦄': 80, '🐉': 80, '🦁': 80, '🐯': 80, '🦋': 80, '🐳': 80, '🦚': 80, '🦩': 80, '👑': 200, '💎': 200, '🔥': 200, '🌙': 200 };
+    let refund = 0;
+    for (const k of Object.keys(s.owned || {})) {
+      if (!k.startsWith('avatar:')) continue;
+      refund += LEGACY[k.slice(7)] || 0;
+      delete s.owned[k];
+    }
+    if (refund) { s.wallet ||= { earned: {}, spent: {} }; s.wallet.earned ||= {}; s.wallet.earned.refundAvatars = refund; }
+    const old = s.profile?.avatar;
+    if (s.profile && !isCode(old)) {
+      let h = 0;
+      for (const ch of String(old || '')) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+      s.profile.avatar = old ? PRESETS[h % PRESETS.length] : DEFAULT_CODE;
+    }
     s.v = STATE_VERSION;
   }
   for (const p of Object.values(s.progress || {})) {
